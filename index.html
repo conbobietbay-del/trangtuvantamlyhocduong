@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lối Về &mdash; Không gian lắng nghe học đường</title>
+<meta name="description" content="Không gian sàng lọc và tư vấn tâm lý dành cho học sinh — nhẹ nhàng, riêng tư, không phán xét.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Nhạc nền nhẹ nhàng -->
+<audio id="bg-music" loop preload="none">
+  <source src="audio/nhac-nen.mp3" type="audio/mpeg">
+</audio>
+<button id="music-toggle" class="music-btn" aria-label="Bật/tắt nhạc nền" title="Nhạc nền nhẹ nhàng">
+  <span class="music-icon">♪</span>
+</button>
+
+<div class="app">
+
+  <!-- ============ MÀN HÌNH 1: TRANG CHỦ ============ -->
+  <section id="screen-home" class="screen active">
+    <div class="breath-wrap" aria-hidden="true">
+      <div class="breath-ring ring-3"></div>
+      <div class="breath-ring ring-2"></div>
+      <div class="breath-ring ring-1"></div>
+      <div class="breath-core"></div>
+    </div>
+
+    <div class="home-content">
+      <p class="eyebrow">Lối Về · Không gian học đường</p>
+      <h1 class="hero-title">Chậm lại một chút,<br>để lắng nghe chính mình.</h1>
+
+      <div id="intro-lines" class="intro-lines">
+        <p class="intro-line" data-delay="0">Đây là nơi bạn có thể tạm dừng giữa những deadline, bài kiểm tra và áp lực thi cử.</p>
+        <p class="intro-line" data-delay="1">Một bài đánh giá ngắn, 21 câu hỏi, giúp bạn hiểu rõ hơn cảm xúc của mình trong những tuần gần đây.</p>
+        <p class="intro-line" data-delay="2">Không có câu trả lời đúng hay sai. Mọi thông tin đều riêng tư và không dùng để đánh giá học lực hay hạnh kiểm.</p>
+      </div>
+
+      <button id="btn-start" class="btn btn-primary btn-reveal" disabled>
+        <span>Bắt đầu kiểm tra</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <p class="disclaimer-mini">Công cụ mang tính chất sàng lọc, tham khảo — không thay thế chẩn đoán y khoa.</p>
+    </div>
+  </section>
+
+  <!-- ============ MÀN HÌNH 2: BÀI KIỂM TRA ============ -->
+  <section id="screen-quiz" class="screen">
+    <div class="quiz-header">
+      <div class="progress-track">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <p class="progress-label"><span id="q-current">1</span> / <span id="q-total">21</span></p>
+    </div>
+
+    <div class="quiz-body">
+      <p id="q-category" class="q-category">Cảm xúc &amp; Áp lực</p>
+      <h2 id="q-text" class="q-text">Nội dung câu hỏi sẽ hiện ở đây.</h2>
+
+      <div id="q-options" class="q-options">
+        <!-- render bằng JS -->
+      </div>
+    </div>
+
+    <div class="quiz-nav">
+      <button id="btn-back" class="btn btn-ghost">Quay lại</button>
+      <button id="btn-next" class="btn btn-primary" disabled>Tiếp theo</button>
+    </div>
+  </section>
+
+  <!-- ============ MÀN HÌNH 3: ĐANG XỬ LÝ ============ -->
+  <section id="screen-loading" class="screen">
+    <div class="breath-wrap breath-small" aria-hidden="true">
+      <div class="breath-ring ring-2"></div>
+      <div class="breath-ring ring-1"></div>
+      <div class="breath-core"></div>
+    </div>
+    <p class="loading-text">Đang tổng hợp kết quả của bạn...</p>
+  </section>
+
+  <!-- ============ MÀN HÌNH 4: KẾT QUẢ ============ -->
+  <section id="screen-result" class="screen">
+    <div class="result-wrap">
+      <p class="eyebrow">Kết quả của bạn</p>
+      <h2 class="section-title">Đây là những gì bài đánh giá ghi nhận được</h2>
+      <p class="result-note">Kết quả phản ánh cảm xúc trong 1&ndash;2 tuần gần đây, không phải là một bản án hay chẩn đoán.</p>
+
+      <div id="result-cards" class="result-cards">
+        <!-- render bằng JS: 3 thẻ Trầm cảm / Lo âu / Căng thẳng -->
+      </div>
+
+      <div id="alert-banner" class="alert-banner hidden">
+        <strong>Bạn không hề đơn độc.</strong>
+        <p>Một vài chỉ số của bạn đang ở mức cần được quan tâm sớm. Hãy thử trò chuyện với phòng tư vấn tâm lý của trường, hoặc gọi các đường dây dưới đây &mdash; luôn có người sẵn sàng lắng nghe.</p>
+        <div class="hotline-list">
+          <a class="hotline-chip" href="tel:111">📞 Tổng đài Quốc gia Bảo vệ Trẻ em &mdash; 111 (24/7)</a>
+          <a class="hotline-chip" href="tel:19009204">📞 Đường dây nóng Ngày Mai &mdash; 1900 9204 (phím 3)</a>
+        </div>
+      </div>
+
+      <button id="btn-see-solution" class="btn btn-primary">Xem gợi ý dành cho bạn</button>
+    </div>
+  </section>
+
+  <!-- ============ MÀN HÌNH 5: GIẢI PHÁP ============ -->
+  <section id="screen-solution" class="screen">
+    <div class="solution-wrap">
+      <p class="eyebrow">Gợi ý cho bạn</p>
+      <h2 id="solution-title" class="section-title">Vài điều nhỏ có thể giúp ích lúc này</h2>
+      <p id="solution-intro" class="result-note"></p>
+
+      <div class="breathing-exercise">
+        <div class="breath-wrap breath-medium" id="exercise-circle" aria-hidden="true">
+          <div class="breath-ring ring-2"></div>
+          <div class="breath-ring ring-1"></div>
+          <div class="breath-core"></div>
+        </div>
+        <div class="exercise-copy">
+          <h3>Bài tập thở 4&ndash;7&ndash;8</h3>
+          <p id="exercise-caption">Hít vào 4 giây &middot; giữ 7 giây &middot; thở ra 8 giây. Làm theo nhịp của vòng tròn trong 3&ndash;4 lượt.</p>
+          <button id="btn-breathe" class="btn btn-ghost btn-small">Bắt đầu theo nhịp thở</button>
+        </div>
+      </div>
+
+      <div id="solution-tips" class="tips-grid">
+        <!-- render bằng JS -->
+      </div>
+
+      <div class="video-block">
+        <h3>Một video ngắn để thư giãn</h3>
+        <div class="video-frame">
+          <iframe
+            src="https://www.youtube.com/embed/inpok4MKVLM"
+            title="Video thư giãn"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p class="video-hint">Bạn có thể thay video này bằng nội dung do phòng tư vấn nhà trường lựa chọn, trong file <code>index.html</code>.</p>
+      </div>
+
+      <button id="btn-see-final" class="btn btn-primary">Tiếp tục</button>
+    </div>
+  </section>
+
+  <!-- ============ MÀN HÌNH 6: TRANG CUỐI ============ -->
+  <section id="screen-final" class="screen">
+    <div class="breath-wrap breath-small" aria-hidden="true">
+      <div class="breath-ring ring-2"></div>
+      <div class="breath-ring ring-1"></div>
+      <div class="breath-core"></div>
+    </div>
+    <div class="final-content">
+      <p class="eyebrow">Trước khi bạn rời đi</p>
+      <h2 id="final-message" class="hero-title small">Cảm ơn bạn đã dành thời gian cho chính mình hôm nay.</h2>
+      <p id="final-sub" class="result-note">Dù kết quả hôm nay là gì, việc bạn quan tâm đến cảm xúc của mình đã là một điều đáng quý.</p>
+
+      <div class="final-actions">
+        <button id="btn-restart" class="btn btn-ghost">Làm lại bài kiểm tra</button>
+        <a href="tel:111" class="btn btn-primary">Cần hỗ trợ ngay &mdash; Gọi 111</a>
+      </div>
+
+      <p class="footer-note">Thông tin của bạn không được lưu trữ hay chia sẻ cho bên thứ ba.<br>Nếu cần trò chuyện trực tiếp, hãy tìm đến phòng tư vấn tâm lý của trường.</p>
+    </div>
+  </section>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
