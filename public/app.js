@@ -1,36 +1,67 @@
 // app.js — logic phía trình duyệt cho trang "Lối Về"
-// Bộ câu hỏi 21 mục, chia 3 nhóm: Trầm cảm (depression) / Lo âu (anxiety) / Căng thẳng (stress)
-// Thang điểm 0-3 mỗi câu, tổng theo nhóm nhân 2 (theo cách quy đổi phổ biến của thang DASS-21)
+// Trang chủ có 4 chủ đề: HỌC TẬP / GIẤC NGỦ / LO ÂU / TÂM TRẠNG
+// Mỗi chủ đề có bộ 7 câu hỏi riêng, thang điểm 0-3 mỗi câu, tổng nhân 2 (giống cách quy đổi DASS-21)
 // LƯU Ý: đây là công cụ sàng lọc tham khảo, KHÔNG phải công cụ chẩn đoán y khoa.
 
 (function () {
   "use strict";
 
-  /* ---------------- Dữ liệu câu hỏi ---------------- */
+  /* ---------------- Dữ liệu 4 chủ đề ---------------- */
 
-  const QUESTIONS = [
-    { cat: "depression", text: "Gần đây tôi thấy khó tìm được điều gì khiến mình thật sự vui hay hứng thú." },
-    { cat: "anxiety",    text: "Tôi thấy tim mình đập nhanh hoặc hồi hộp dù không vận động hay gặp nguy hiểm gì." },
-    { cat: "stress",     text: "Tôi dễ nổi cáu hoặc bực bội hơn bình thường vì những chuyện nhỏ nhặt." },
-    { cat: "depression", text: "Tôi cảm thấy mình chẳng còn gì để mong đợi trong những ngày sắp tới." },
-    { cat: "anxiety",    text: "Tôi hay cảm thấy lo sợ vô cớ, dù không có lý do rõ ràng nào cả." },
-    { cat: "stress",     text: "Tôi thấy khó mà thư giãn được, kể cả khi có thời gian rảnh." },
-    { cat: "depression", text: "Tôi thấy uể oải, không có động lực để bắt đầu làm bất cứ việc gì." },
-    { cat: "anxiety",    text: "Tay chân tôi run hoặc đổ mồ hôi khi phải đối mặt với một tình huống áp lực." },
-    { cat: "stress",     text: "Tôi phản ứng hơi thái quá với những tình huống bất ngờ hoặc bị gián đoạn." },
-    { cat: "depression", text: "Tôi cảm thấy bản thân không có nhiều giá trị hoặc không giỏi giang như người khác." },
-    { cat: "anxiety",    text: "Tôi từng cảm thấy khó thở hoặc nghẹn ở ngực khi lo lắng, dù không bị bệnh về hô hấp." },
-    { cat: "stress",     text: "Tôi thấy mình luôn trong trạng thái căng như dây đàn, khó mà dịu xuống." },
-    { cat: "depression", text: "Tôi cảm thấy buồn và chán nản mà không rõ vì sao." },
-    { cat: "anxiety",    text: "Tôi dễ hoảng hốt hoặc lo lắng quá mức trước những việc bình thường." },
-    { cat: "stress",     text: "Tôi khó tập trung vào việc đang làm vì đầu óc cứ nghĩ lung tung." },
-    { cat: "depression", text: "Tôi thấy khó vực dậy tinh thần, kể cả khi có người động viên." },
-    { cat: "anxiety",    text: "Tôi lo sợ mình sẽ bị đánh giá, chê cười hoặc thất bại trước mặt người khác." },
-    { cat: "stress",     text: "Tôi cảm thấy khó chịu, mất kiên nhẫn khi phải chờ đợi hoặc bị làm phiền." },
-    { cat: "depression", text: "Tôi cảm thấy cuộc sống hiện tại khá vô nghĩa hoặc tẻ nhạt." },
-    { cat: "anxiety",    text: "Tôi cảm nhận rõ cơ thể mình phản ứng (tim đập, đổ mồ hôi, run) khi chỉ mới nghĩ đến việc gì đó." },
-    { cat: "stress",     text: "Tôi cần rất nhiều thời gian và sức lực để bình tĩnh trở lại sau khi bị căng thẳng." },
-  ];
+  const TOPICS = {
+    hoctap: {
+      label: "Học tập",
+      questions: [
+        "Tôi cảm thấy áp lực nặng nề mỗi khi nghĩ đến bài kiểm tra hoặc kỳ thi sắp tới.",
+        "Tôi khó tập trung khi ngồi vào bàn học, dù đã cố gắng.",
+        "Tôi lo mình sẽ làm bố mẹ hoặc thầy cô thất vọng vì kết quả học tập.",
+        "Tôi thấy khối lượng bài vở hiện tại vượt quá khả năng của mình.",
+        "Tôi hay so sánh thành tích của mình với bạn bè và cảm thấy thua kém.",
+        "Tôi mất hứng thú với việc học, kể cả những môn mình từng thích.",
+        "Tôi thức khuya học bài đến mức ảnh hưởng đến sức khỏe.",
+      ],
+      thresholds: [ [14, "normal"], [18, "mild"], [25, "moderate"], [33, "severe"], [Infinity, "extreme"] ],
+    },
+    giacngu: {
+      label: "Giấc ngủ",
+      questions: [
+        "Tôi mất nhiều thời gian mới có thể chìm vào giấc ngủ mỗi tối.",
+        "Tôi hay tỉnh giấc giữa đêm và khó ngủ lại.",
+        "Tôi thức dậy vào buổi sáng mà vẫn cảm thấy mệt mỏi, không tỉnh táo.",
+        "Suy nghĩ về bài vở hoặc lo lắng khiến tôi khó thư giãn trước khi ngủ.",
+        "Tôi thường ngủ ít hơn 6 tiếng mỗi đêm vì bận học hoặc dùng điện thoại.",
+        "Giờ giấc ngủ của tôi thất thường, không theo một nhịp cố định.",
+        "Tôi cảm thấy buồn ngủ hoặc uể oải vào ban ngày, ảnh hưởng đến việc học.",
+      ],
+      thresholds: [ [10, "normal"], [14, "mild"], [20, "moderate"], [28, "severe"], [Infinity, "extreme"] ],
+    },
+    loau: {
+      label: "Lo âu",
+      questions: [
+        "Tôi thấy tim đập nhanh hoặc hồi hộp dù không vận động hay gặp nguy hiểm gì.",
+        "Tôi hay cảm thấy lo sợ vô cớ, dù không có lý do rõ ràng nào cả.",
+        "Tay chân tôi run hoặc đổ mồ hôi khi phải đối mặt với một tình huống áp lực.",
+        "Tôi từng cảm thấy khó thở hoặc nghẹn ở ngực khi lo lắng, dù không bị bệnh về hô hấp.",
+        "Tôi dễ hoảng hốt hoặc lo lắng quá mức trước những việc bình thường.",
+        "Tôi lo sợ mình sẽ bị đánh giá, chê cười hoặc thất bại trước mặt người khác.",
+        "Tôi cảm nhận rõ cơ thể mình phản ứng (tim đập, đổ mồ hôi, run) khi chỉ mới nghĩ đến việc gì đó.",
+      ],
+      thresholds: [ [7, "normal"], [9, "mild"], [14, "moderate"], [19, "severe"], [Infinity, "extreme"] ],
+    },
+    tamtrang: {
+      label: "Tâm trạng",
+      questions: [
+        "Gần đây tôi thấy khó tìm được điều gì khiến mình thật sự vui hay hứng thú.",
+        "Tôi cảm thấy mình chẳng còn gì để mong đợi trong những ngày sắp tới.",
+        "Tôi thấy uể oải, không có động lực để bắt đầu làm bất cứ việc gì.",
+        "Tôi cảm thấy bản thân không có nhiều giá trị hoặc không giỏi giang như người khác.",
+        "Tôi cảm thấy buồn và chán nản mà không rõ vì sao.",
+        "Tôi thấy khó vực dậy tinh thần, kể cả khi có người động viên.",
+        "Tôi cảm thấy cuộc sống hiện tại khá vô nghĩa hoặc tẻ nhạt.",
+      ],
+      thresholds: [ [9, "normal"], [13, "mild"], [20, "moderate"], [27, "severe"], [Infinity, "extreme"] ],
+    },
+  };
 
   const OPTIONS = [
     { value: 0, label: "Không đúng với tôi chút nào" },
@@ -38,19 +69,6 @@
     { value: 2, label: "Đúng khá nhiều, khá thường xuyên" },
     { value: 3, label: "Hoàn toàn đúng, hầu như luôn vậy" },
   ];
-
-  const CAT_LABEL = {
-    depression: "Cảm xúc & Hứng thú",
-    anxiety: "Lo âu & Cơ thể",
-    stress: "Áp lực & Căng thẳng",
-  };
-
-  // Ngưỡng đánh giá mức độ theo từng nhóm (điểm đã nhân 2)
-  const THRESHOLDS = {
-    depression: [ [9, "normal"], [13, "mild"], [20, "moderate"], [27, "severe"], [Infinity, "extreme"] ],
-    anxiety:    [ [7, "normal"], [9,  "mild"], [14, "moderate"], [19, "severe"], [Infinity, "extreme"] ],
-    stress:     [ [14,"normal"], [18, "mild"], [25, "moderate"], [33, "severe"], [Infinity, "extreme"] ],
-  };
 
   const LEVEL_LABEL = {
     normal: "Bình thường",
@@ -60,11 +78,12 @@
     extreme: "Rất cao",
   };
 
-  const LEVEL_MAX = { depression: 42, anxiety: 42, stress: 42 };
+  const SCORE_MAX = 42; // 7 câu x 3 điểm x 2
 
   /* ---------------- State ---------------- */
 
-  let answers = new Array(QUESTIONS.length).fill(null);
+  let currentTopic = null;
+  let answers = [];
   let currentQ = 0;
 
   /* ---------------- Helpers điều hướng màn hình ---------------- */
@@ -77,16 +96,22 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  /* ---------------- Trang chủ ---------------- */
+  /* ---------------- Trang chủ: chọn chủ đề ---------------- */
 
-  const btnStart = document.getElementById("btn-start");
-  // Nút "Bắt đầu kiểm tra" chỉ bật sau khi phần giới thiệu chạy xong (đồng bộ với animation CSS)
-  setTimeout(() => { btnStart.disabled = false; }, 2900);
+  document.querySelectorAll(".category-start").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const topic = btn.getAttribute("data-topic");
+      startQuiz(topic);
+    });
+  });
 
-  btnStart.addEventListener("click", () => {
+  function startQuiz(topicKey) {
+    currentTopic = topicKey;
+    answers = new Array(TOPICS[topicKey].questions.length).fill(null);
+    currentQ = 0;
     showScreen("quiz");
     renderQuestion();
-  });
+  }
 
   /* ---------------- Nhạc nền ---------------- */
 
@@ -119,14 +144,13 @@
   const btnBack = document.getElementById("btn-back");
   const btnNext = document.getElementById("btn-next");
 
-  qTotalEl.textContent = QUESTIONS.length;
-
   function renderQuestion() {
-    const q = QUESTIONS[currentQ];
-    qCategoryEl.textContent = CAT_LABEL[q.cat];
-    qTextEl.textContent = q.text;
+    const topic = TOPICS[currentTopic];
+    qTotalEl.textContent = topic.questions.length;
+    qCategoryEl.textContent = topic.label;
+    qTextEl.textContent = topic.questions[currentQ];
     qCurrentEl.textContent = currentQ + 1;
-    progressFill.style.width = (((currentQ + 1) / QUESTIONS.length) * 100).toFixed(1) + "%";
+    progressFill.style.width = (((currentQ + 1) / topic.questions.length) * 100).toFixed(1) + "%";
 
     qOptionsEl.innerHTML = "";
     OPTIONS.forEach((opt) => {
@@ -137,7 +161,7 @@
       btn.addEventListener("click", () => {
         answers[currentQ] = opt.value;
         renderQuestion();
-        setTimeout(() => { if (currentQ < QUESTIONS.length - 1) goNext(); else updateNavState(); }, 260);
+        setTimeout(() => { if (currentQ < topic.questions.length - 1) goNext(); else updateNavState(); }, 260);
       });
       qOptionsEl.appendChild(btn);
     });
@@ -147,13 +171,15 @@
   }
 
   function updateNavState() {
+    const topic = TOPICS[currentTopic];
     btnNext.disabled = answers[currentQ] === null;
-    btnNext.textContent = currentQ === QUESTIONS.length - 1 ? "Xem kết quả" : "Tiếp theo";
+    btnNext.textContent = currentQ === topic.questions.length - 1 ? "Xem kết quả" : "Tiếp theo";
   }
 
   function goNext() {
+    const topic = TOPICS[currentTopic];
     if (answers[currentQ] === null) return;
-    if (currentQ < QUESTIONS.length - 1) {
+    if (currentQ < topic.questions.length - 1) {
       currentQ++;
       renderQuestion();
     } else {
@@ -168,19 +194,14 @@
 
   /* ---------------- Tính điểm & kết quả ---------------- */
 
-  function computeScores() {
-    const raw = { depression: 0, anxiety: 0, stress: 0 };
-    QUESTIONS.forEach((q, i) => { raw[q.cat] += answers[i] || 0; });
-    // Quy đổi theo cách tính phổ biến của thang 21 câu: nhân đôi tổng điểm mỗi nhóm
-    return {
-      depression: raw.depression * 2,
-      anxiety: raw.anxiety * 2,
-      stress: raw.stress * 2,
-    };
+  function computeScore() {
+    const raw = answers.reduce((sum, v) => sum + (v || 0), 0);
+    // Quy đổi: nhân đôi tổng điểm (giống cách tính thang 21 câu gốc)
+    return raw * 2;
   }
 
-  function levelFor(cat, score) {
-    for (const [max, level] of THRESHOLDS[cat]) {
+  function levelFor(topicKey, score) {
+    for (const [max, level] of TOPICS[topicKey].thresholds) {
       if (score <= max) return level;
     }
     return "extreme";
@@ -189,37 +210,33 @@
   function finishQuiz() {
     showScreen("loading");
     setTimeout(() => {
-      const scores = computeScores();
-      renderResults(scores);
+      const score = computeScore();
+      renderResults(score);
       showScreen("result");
     }, 1300);
   }
 
   const resultCardsEl = document.getElementById("result-cards");
   const alertBanner = document.getElementById("alert-banner");
-  let lastLevels = {};
+  let lastLevel = "normal";
 
-  function renderResults(scores) {
+  function renderResults(score) {
     resultCardsEl.innerHTML = "";
-    let hasAlert = false;
-    lastLevels = {};
+    const topic = TOPICS[currentTopic];
+    const level = levelFor(currentTopic, score);
+    lastLevel = level;
+    const hasAlert = level === "severe" || level === "extreme";
 
-    ["depression", "anxiety", "stress"].forEach((cat) => {
-      const level = levelFor(cat, scores[cat]);
-      lastLevels[cat] = level;
-      if (level === "severe" || level === "extreme") hasAlert = true;
-
-      const pct = Math.min(100, (scores[cat] / LEVEL_MAX[cat]) * 100);
-      const card = document.createElement("div");
-      card.className = `result-card level-${level}`;
-      card.innerHTML = `
-        <p class="rc-label">${CAT_LABEL[cat]}</p>
-        <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${pct}%"></div></div>
-        <p class="rc-level">${LEVEL_LABEL[level]}</p>
-        <p class="rc-score">${scores[cat]} / ${LEVEL_MAX[cat]} điểm</p>
-      `;
-      resultCardsEl.appendChild(card);
-    });
+    const pct = Math.min(100, (score / SCORE_MAX) * 100);
+    const card = document.createElement("div");
+    card.className = `result-card level-${level}`;
+    card.innerHTML = `
+      <p class="rc-label">${topic.label}</p>
+      <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${pct}%"></div></div>
+      <p class="rc-level">${LEVEL_LABEL[level]}</p>
+      <p class="rc-score">${score} / ${SCORE_MAX} điểm</p>
+    `;
+    resultCardsEl.appendChild(card);
 
     alertBanner.classList.toggle("hidden", !hasAlert);
 
@@ -228,7 +245,7 @@
       fetch("/api/canh-bao", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mucDo: JSON.stringify(lastLevels), thoiGian: new Date().toISOString() }),
+        body: JSON.stringify({ chuDe: currentTopic, mucDo: level, thoiGian: new Date().toISOString() }),
       }).catch(() => {});
     }
   }
@@ -283,15 +300,8 @@
     },
   };
 
-  function worstLevel(levels) {
-    const order = ["normal", "mild", "moderate", "severe", "extreme"];
-    return Object.values(levels).reduce((worst, lvl) =>
-      order.indexOf(lvl) > order.indexOf(worst) ? lvl : worst, "normal");
-  }
-
   document.getElementById("btn-see-solution").addEventListener("click", () => {
-    const level = worstLevel(lastLevels);
-    const content = SOLUTION_CONTENT[level] || SOLUTION_CONTENT.normal;
+    const content = SOLUTION_CONTENT[lastLevel] || SOLUTION_CONTENT.normal;
 
     document.getElementById("solution-title").textContent = content.title;
     document.getElementById("solution-intro").textContent = content.intro;
@@ -335,11 +345,10 @@
   });
 
   document.getElementById("btn-see-final").addEventListener("click", () => {
-    const level = worstLevel(lastLevels);
     const finalMsgEl = document.getElementById("final-message");
     const finalSubEl = document.getElementById("final-sub");
 
-    if (level === "severe" || level === "extreme") {
+    if (lastLevel === "severe" || lastLevel === "extreme") {
       finalMsgEl.textContent = "Bạn đã rất dũng cảm khi đối diện với cảm xúc của mình hôm nay.";
       finalSubEl.textContent = "Hãy để ai đó đồng hành cùng bạn trong những bước tiếp theo — bạn không cần phải một mình.";
     } else {
@@ -350,9 +359,10 @@
   });
 
   document.getElementById("btn-restart").addEventListener("click", () => {
-    answers = new Array(QUESTIONS.length).fill(null);
+    currentTopic = null;
+    answers = [];
     currentQ = 0;
-    lastLevels = {};
+    lastLevel = "normal";
     showScreen("home");
   });
 
