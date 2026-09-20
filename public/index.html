@@ -3,247 +3,650 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lối Về &mdash; Không gian lắng nghe học đường</title>
-<meta name="description" content="Không gian sàng lọc và tư vấn tâm lý dành cho học sinh — nhẹ nhàng, riêng tư, không phán xét.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Góc Tâm Lý Học Đường</title>
 <link rel="stylesheet" href="style.css">
-<!--
-  Đoạn style dưới đây CHỈ dành cho lưới 4 thẻ chủ đề mới ở trang chủ.
-  Chưa có style.css gốc trong tay nên mình để tạm ở đây — bạn có thể
-  copy sang style.css rồi xoá khối <style> này khi thuận tiện.
--->
-<style>
-  .category-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    width: 100%;
-    max-width: 920px;
-    margin: 28px auto 20px;
-  }
-  @media (max-width: 860px) {
-    .category-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 480px) {
-    .category-grid { grid-template-columns: 1fr; }
-  }
-  .category-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 8px;
-    padding: 22px 16px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.65);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(6px);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .category-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.09);
-  }
-  .category-icon { font-size: 30px; line-height: 1; }
-  .category-card h3 {
-    font-family: "Be Vietnam Pro", sans-serif;
-    font-size: 15px;
-    letter-spacing: 0.04em;
-    font-weight: 700;
-    margin: 4px 0 0;
-  }
-  .category-card p {
-    font-size: 13px;
-    opacity: 0.75;
-    margin: 0 0 6px;
-    line-height: 1.4;
-  }
-  .btn-small { padding: 8px 16px; font-size: 13px; }
-</style>
 </head>
 <body>
 
-<!-- Nhạc nền nhẹ nhàng -->
+<!-- Nhạc nền thư giãn (tự tổng hợp, êm dịu, dùng để thư giãn khi làm bài) -->
 <audio id="bg-music" loop preload="none">
-  <source src="audio/nhac-nen.mp3" type="audio/mpeg">
+  <source src="assets/music.mp3" type="audio/mpeg">
 </audio>
-<button id="music-toggle" class="music-btn" aria-label="Bật/tắt nhạc nền" title="Nhạc nền nhẹ nhàng">
-  <span class="music-icon">♪</span>
-</button>
+<div class="music-bar">
+  <button id="music-toggle" type="button">🔈 Bật nhạc thư giãn</button>
+</div>
 
-<div class="app">
+<div class="container">
 
-  <!-- ============ MÀN HÌNH 1: TRANG CHỦ ============ -->
-  <section id="screen-home" class="screen active">
-    <div class="breath-wrap" aria-hidden="true">
-      <div class="breath-ring ring-3"></div>
-      <div class="breath-ring ring-2"></div>
-      <div class="breath-ring ring-1"></div>
-      <div class="breath-core"></div>
-    </div>
-
-    <div class="home-content">
-      <p class="eyebrow">Lối Về · Không gian học đường</p>
-      <h1 class="hero-title">Chậm lại một chút,<br>để lắng nghe chính mình.</h1>
-      <p class="intro-line" style="opacity:1;">Chọn một chủ đề bạn đang quan tâm nhất lúc này. Mỗi bài đánh giá ngắn giúp bạn hiểu rõ hơn cảm xúc của mình trong những ngày gần đây. Không có câu trả lời đúng hay sai, và mọi thông tin đều riêng tư.</p>
-
-      <div class="category-grid">
-        <div class="category-card">
-          <span class="category-icon">📚</span>
-          <h3>HỌC TẬP</h3>
-          <p>Áp lực bài vở, thi cử, kỳ vọng thành tích.</p>
-          <button class="btn btn-primary btn-small category-start" data-topic="hoctap">Bắt đầu kiểm tra</button>
-        </div>
-        <div class="category-card">
-          <span class="category-icon">🌙</span>
-          <h3>GIẤC NGỦ</h3>
-          <p>Chất lượng và thói quen giấc ngủ gần đây.</p>
-          <button class="btn btn-primary btn-small category-start" data-topic="giacngu">Bắt đầu kiểm tra</button>
-        </div>
-        <div class="category-card">
-          <span class="category-icon">💭</span>
-          <h3>LO ÂU</h3>
-          <p>Cảm giác lo lắng, hồi hộp, căng thẳng cơ thể.</p>
-          <button class="btn btn-primary btn-small category-start" data-topic="loau">Bắt đầu kiểm tra</button>
-        </div>
-        <div class="category-card">
-          <span class="category-icon">🌤️</span>
-          <h3>TÂM TRẠNG</h3>
-          <p>Cảm xúc, hứng thú và động lực trong cuộc sống.</p>
-          <button class="btn btn-primary btn-small category-start" data-topic="tamtrang">Bắt đầu kiểm tra</button>
-        </div>
-      </div>
-
-      <p class="disclaimer-mini">Công cụ mang tính chất sàng lọc, tham khảo — không thay thế chẩn đoán y khoa.</p>
-    </div>
+  <!-- ================= 1. TRANG GIỚI THIỆU ================= -->
+  <section id="intro-section" class="card">
+    <h1>🌿 Góc Tâm Lý Học Đường</h1>
+    <p class="intro-text">
+      Chào bạn! Đây là không gian nhỏ để bạn dừng lại một chút, lắng nghe cảm xúc
+      của chính mình. Bạn sẽ được hỏi vài câu ngắn để hiểu rõ hơn về trạng thái
+      tâm lý hiện tại, sau đó chọn một trong bốn chủ đề: <strong>Học Tập, Giấc Ngủ,
+      Lo Âu</strong> hoặc <strong>Tâm Trạng</strong> để đi sâu hơn.
+    </p>
+    <p class="intro-note">
+      Lưu ý: Đây KHÔNG phải là công cụ chẩn đoán y khoa. Kết quả chỉ mang tính
+      tham khảo. Nếu bạn đang gặp khó khăn nghiêm trọng, hãy tìm đến thầy cô,
+      cha mẹ hoặc chuyên gia tâm lý để được hỗ trợ trực tiếp.
+    </p>
+    <button class="btn" id="start-btn" type="button">Bắt đầu kiểm tra</button>
   </section>
 
-  <!-- ============ MÀN HÌNH 2: BÀI KIỂM TRA ============ -->
-  <section id="screen-quiz" class="screen">
-    <div class="quiz-header">
-      <div class="progress-track">
-        <div id="progress-fill" class="progress-fill"></div>
-      </div>
-      <p class="progress-label"><span id="q-current">1</span> / <span id="q-total">7</span></p>
-    </div>
-
-    <div class="quiz-body">
-      <p id="q-category" class="q-category">Chủ đề</p>
-      <h2 id="q-text" class="q-text">Nội dung câu hỏi sẽ hiện ở đây.</h2>
-
-      <div id="q-options" class="q-options">
-        <!-- render bằng JS -->
-      </div>
-    </div>
-
+  <!-- ================= 2. SÀNG LỌC AN TOÀN (trước mọi bài test) ================= -->
+  <section id="safety-section" class="card hidden">
+    <span class="quiz-label">Sàng lọc an toàn</span>
+    <p style="margin-bottom:18px;">
+      Trước khi bắt đầu, mình xin hỏi bạn vài câu để chắc chắn bạn đang an toàn.
+      Hãy trả lời thật lòng nhé.
+    </p>
+    <div class="progress-wrap"><div class="progress-fill" id="safety-progress"></div></div>
+    <div id="safety-question-container"></div>
     <div class="quiz-nav">
-      <button id="btn-back" class="btn btn-ghost">Quay lại</button>
-      <button id="btn-next" class="btn btn-primary" disabled>Tiếp theo</button>
+      <button class="btn btn-secondary" id="safety-prev-btn" type="button">← Quay lại</button>
+      <button class="btn" id="safety-next-btn" type="button">Tiếp theo →</button>
     </div>
   </section>
 
-  <!-- ============ MÀN HÌNH 3: ĐANG XỬ LÝ ============ -->
-  <section id="screen-loading" class="screen">
-    <div class="breath-wrap breath-small" aria-hidden="true">
-      <div class="breath-ring ring-2"></div>
-      <div class="breath-ring ring-1"></div>
-      <div class="breath-core"></div>
-    </div>
-    <p class="loading-text">Đang tổng hợp kết quả của bạn...</p>
-  </section>
-
-  <!-- ============ MÀN HÌNH 4: KẾT QUẢ ============ -->
-  <section id="screen-result" class="screen">
-    <div class="result-wrap">
-      <p class="eyebrow">Kết quả của bạn</p>
-      <h2 class="section-title">Đây là những gì bài đánh giá ghi nhận được</h2>
-      <p class="result-note">Kết quả phản ánh cảm xúc trong 1&ndash;2 tuần gần đây, không phải là một bản án hay chẩn đoán.</p>
-
-      <div id="result-cards" class="result-cards">
-        <!-- render bằng JS: 1 thẻ kết quả cho chủ đề đã chọn -->
-      </div>
-
-      <div id="alert-banner" class="alert-banner hidden">
-        <strong>Bạn không hề đơn độc.</strong>
-        <p>Một vài chỉ số của bạn đang ở mức cần được quan tâm sớm. Hãy thử trò chuyện với phòng tư vấn tâm lý của trường, hoặc gọi các đường dây dưới đây &mdash; luôn có người sẵn sàng lắng nghe.</p>
-        <div class="hotline-list">
-          <a class="hotline-chip" href="tel:111">📞 Tổng đài Quốc gia Bảo vệ Trẻ em &mdash; 111 (24/7)</a>
-          <a class="hotline-chip" href="tel:19009204">📞 Đường dây nóng Ngày Mai &mdash; 1900 9204 (phím 3)</a>
-        </div>
-      </div>
-
-      <button id="btn-see-solution" class="btn btn-primary">Xem gợi ý dành cho bạn</button>
+  <!-- ================= 3. CHỌN CHỦ ĐỀ ================= -->
+  <section id="category-section" class="card hidden">
+    <h1>Bạn muốn tìm hiểu về điều gì?</h1>
+    <p>Chọn một chủ đề bạn đang quan tâm nhất. Bạn có thể làm nhiều chủ đề, từng cái một.</p>
+    <div class="category-grid" id="category-grid"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="to-summary-btn" type="button">Xem tổng kết →</button>
     </div>
   </section>
 
-  <!-- ============ MÀN HÌNH 5: GIẢI PHÁP ============ -->
-  <section id="screen-solution" class="screen">
-    <div class="solution-wrap">
-      <p class="eyebrow">Gợi ý cho bạn</p>
-      <h2 id="solution-title" class="section-title">Vài điều nhỏ có thể giúp ích lúc này</h2>
-      <p id="solution-intro" class="result-note"></p>
-
-      <div class="breathing-exercise">
-        <div class="breath-wrap breath-medium" id="exercise-circle" aria-hidden="true">
-          <div class="breath-ring ring-2"></div>
-          <div class="breath-ring ring-1"></div>
-          <div class="breath-core"></div>
-        </div>
-        <div class="exercise-copy">
-          <h3>Bài tập thở 4&ndash;7&ndash;8</h3>
-          <p id="exercise-caption">Hít vào 4 giây &middot; giữ 7 giây &middot; thở ra 8 giây. Làm theo nhịp của vòng tròn trong 3&ndash;4 lượt.</p>
-          <button id="btn-breathe" class="btn btn-ghost btn-small">Bắt đầu theo nhịp thở</button>
-        </div>
-      </div>
-
-      <div id="solution-tips" class="tips-grid">
-        <!-- render bằng JS -->
-      </div>
-
-      <div class="video-block">
-        <h3>Một video ngắn để thư giãn</h3>
-        <div class="video-frame">
-          <iframe
-            src="https://www.youtube.com/embed/inpok4MKVLM"
-            title="Video thư giãn"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
-        </div>
-        <p class="video-hint">Bạn có thể thay video này bằng nội dung do phòng tư vấn nhà trường lựa chọn, trong file <code>index.html</code>.</p>
-      </div>
-
-      <button id="btn-see-final" class="btn btn-primary">Tiếp tục</button>
+  <!-- ================= 4. BÀI KIỂM TRA CHỦ ĐỀ ================= -->
+  <section id="quiz-section" class="card hidden">
+    <span class="quiz-label" id="quiz-label"></span>
+    <div class="progress-wrap"><div class="progress-fill" id="progress-fill"></div></div>
+    <div id="question-container"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-secondary" id="prev-btn" type="button">← Quay lại</button>
+      <button class="btn" id="next-btn" type="button">Tiếp theo →</button>
     </div>
   </section>
 
-  <!-- ============ MÀN HÌNH 6: TRANG CUỐI ============ -->
-  <section id="screen-final" class="screen">
-    <div class="breath-wrap breath-small" aria-hidden="true">
-      <div class="breath-ring ring-2"></div>
-      <div class="breath-ring ring-1"></div>
-      <div class="breath-core"></div>
+  <!-- ================= 5. KẾT QUẢ / GIẢI PHÁP THEO CHỦ ĐỀ ================= -->
+  <section id="result-section" class="card hidden">
+    <span class="result-badge" id="result-badge"></span>
+    <h2 id="result-title"></h2>
+    <p id="result-desc"></p>
+
+    <h2>Gợi ý dành cho bạn</h2>
+    <ul class="solution-list" id="solution-list"></ul>
+
+    <div class="reminder-box hidden" id="reminder-box"></div>
+    <div class="referral-box hidden" id="referral-box"></div>
+
+    <div class="btn-row">
+      <button class="btn" id="back-to-category-btn" type="button">Chọn chủ đề khác</button>
+      <button class="btn btn-secondary" id="result-to-summary-btn" type="button">Xem tổng kết</button>
     </div>
-    <div class="final-content">
-      <p class="eyebrow">Trước khi bạn rời đi</p>
-      <h2 id="final-message" class="hero-title small">Cảm ơn bạn đã dành thời gian cho chính mình hôm nay.</h2>
-      <p id="final-sub" class="result-note">Dù kết quả hôm nay là gì, việc bạn quan tâm đến cảm xúc của mình đã là một điều đáng quý.</p>
+  </section>
 
-      <div class="final-actions">
-        <button id="btn-restart" class="btn btn-ghost">Làm lại bài kiểm tra</button>
-        <a href="tel:111" class="btn btn-primary">Cần hỗ trợ ngay &mdash; Gọi 111</a>
-      </div>
+  <!-- ================= 6. CẢNH BÁO KHẨN CẤP (toàn màn hình) ================= -->
+  <section id="crisis-section" class="card hidden">
+    <div class="crisis-box">
+      <h3>💛 Bạn không đơn độc</h3>
+      <p>
+        Một vài câu trả lời của bạn cho thấy bạn có thể đang rất mệt mỏi hoặc
+        có suy nghĩ muốn làm tổn thương bản thân. Điều này rất đáng được quan
+        tâm ngay, và bạn xứng đáng được giúp đỡ — bạn không cần phải tự mình
+        vượt qua chuyện này.
+      </p>
+      <p><strong>Hãy liên hệ ngay với:</strong></p>
+      <p>📞 <a href="tel:111">Tổng đài quốc gia bảo vệ trẻ em 111</a> — miễn phí, hoạt động 24/7, có tư vấn viên tâm lý.</p>
+      <p>🚑 <a href="tel:115">Cấp cứu y tế 115</a> — nếu bạn thấy mình không an toàn ngay lúc này.</p>
+      <p>Ngoài ra, hãy nói chuyện với một người bạn tin tưởng (cha mẹ, thầy cô,
+      cán bộ tư vấn tâm lý của trường) ngay hôm nay.</p>
+    </div>
+    <button class="btn" id="crisis-home-btn" type="button">Về trang chủ</button>
+  </section>
 
-      <p class="footer-note">Thông tin của bạn không được lưu trữ hay chia sẻ cho bên thứ ba.<br>Nếu cần trò chuyện trực tiếp, hãy tìm đến phòng tư vấn tâm lý của trường.</p>
+  <!-- ================= 7. TỔNG KẾT ================= -->
+  <section id="summary-section" class="card hidden">
+    <div class="final-emoji">🌷</div>
+    <h1>Tổng kết của bạn</h1>
+    <p>Đây là những gì bạn đã chia sẻ hôm nay:</p>
+    <div id="summary-list"></div>
+
+    <div class="reminder-box hidden" id="summary-reminder-box"></div>
+    <div class="referral-box hidden" id="summary-referral-box"></div>
+
+    <p id="summary-message" style="margin-top:16px;"></p>
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="summary-back-btn" type="button">Làm thêm chủ đề khác</button>
+      <button class="btn btn-secondary" id="restart-btn" type="button">Làm lại từ đầu</button>
     </div>
   </section>
 
 </div>
 
-<script src="app.js"></script>
+<footer class="site-footer">
+  Góc Tâm Lý Học Đường · Công cụ hỗ trợ tham khảo, không thay thế tư vấn chuyên môn
+</footer>
+
+<script>
+/* =========================================================================
+   DỮ LIỆU: bộ câu hỏi chuẩn (C-SSRS rút gọn, PHQ-9, GAD-7, MBI, Sleep)
+   theo tài liệu tham khảo. isRiskItem: nếu chọn giá trị > 0 sẽ NGẮT bài test
+   và chuyển ngay sang màn hình cảnh báo khẩn cấp.
+   ========================================================================= */
+
+const OPT_012 = [
+  { text: "Không", score: 0 },
+  { text: "Có, đôi lúc", score: 1 },
+  { text: "Có, thường xuyên", score: 2 }
+];
+
+const OPT_LIKERT4 = [
+  { text: "Không bao giờ", score: 0 },
+  { text: "Vài ngày (Hiếm khi)", score: 1 },
+  { text: "Hơn một nửa số ngày (Đôi khi)", score: 2 },
+  { text: "Hầu như mỗi ngày (Thường xuyên)", score: 3 }
+];
+
+const OPT_LIKERT5 = [
+  { text: "Chưa bao giờ", score: 0 },
+  { text: "Hiếm khi", score: 1 },
+  { text: "Thỉnh thoảng", score: 2 },
+  { text: "Thường xuyên", score: 3 },
+  { text: "Luôn luôn", score: 4 }
+];
+
+const SAFETY_QUESTIONS = [
+  { text: "Bạn có từng mong muốn mình không còn sống nữa, hoặc ước mình có thể ngủ đi và không bao giờ thức dậy?", isRiskItem: true },
+  { text: "Bạn có từng thực sự có suy nghĩ về việc tự sát hoặc tự làm tổn thương bản thân, kể cả nghĩ đến cách thức thực hiện?", isRiskItem: true },
+  { text: "Hiện tại, bạn có cảm thấy mình không an toàn với chính mình không?", isRiskItem: true }
+];
+
+const CATEGORIES = {
+  hoctap: {
+    name: "Học Tập",
+    icon: "📚",
+    desc: "Áp lực bài vở, kiệt sức trong việc học",
+    subtitle: "Thang đo Kiệt sức Học tập",
+    options: OPT_LIKERT5,
+    maxScore: 20,
+    questions: [
+      { text: "Bạn cảm thấy kiệt sức về mặt tinh thần sau một ngày học tập?" },
+      { text: "Bạn cảm thấy mệt mỏi ngay từ buổi sáng khi nghĩ đến việc phải bắt đầu một ngày học mới?" },
+      { text: "Bạn cảm thấy bản thân ngày càng thờ ơ, thiếu quan tâm hoặc chai sạn với việc học?" },
+      { text: "Bạn nghi ngờ về ý nghĩa hoặc giá trị của việc học mà mình đang theo đuổi?" },
+      { text: "Bạn cảm thấy mình học tập kém hiệu quả hơn trước đây?" }
+    ],
+    levels: [
+      { max: 6, label: "Bình thường", badge: "low",
+        desc: "Tinh thần học tập của bạn khá ổn định, còn nhiều động lực.",
+        advice: [
+          "Tiếp tục giữ lịch học - nghỉ cân bằng như hiện tại.",
+          "Đặt mục tiêu học tập vừa sức, không quá dồn ép bản thân.",
+          "Dành thời gian cho sở thích ngoài giờ học để nạp lại năng lượng."
+        ] },
+      { max: 13, label: "Có nguy cơ kiệt sức", badge: "mid",
+        desc: "Bạn đang bắt đầu quá tải trong việc học, cần tái tạo năng lượng sớm.",
+        advice: [
+          "Chia nhỏ khối lượng bài vở, tránh dồn việc vào phút chót.",
+          "Xen kẽ các khoảng nghỉ ngắn 5-10 phút sau mỗi 45-50 phút học.",
+          "Nói chuyện với giáo viên chủ nhiệm nếu khối lượng bài tập quá tải.",
+          "Ngủ đủ giấc, hạn chế học khuya liên tục."
+        ] },
+      { max: 20, label: "Kiệt sức cao (Burnout)", badge: "high", severe: true,
+        desc: "Bạn đã rơi vào trạng thái kiệt sức trong học tập, cần nghỉ ngơi và được hỗ trợ.",
+        advice: [
+          "Cho phép bản thân tạm ngắt kết nối với việc học một khoảng ngắn để hồi phục.",
+          "Chia sẻ với gia đình/nhà trường về khối lượng học tập đang vượt quá sức.",
+          "Tìm đến cán bộ tư vấn tâm lý học đường để được hỗ trợ sắp xếp lại lịch học."
+        ] }
+    ]
+  },
+
+  giacngu: {
+    name: "Giấc Ngủ",
+    icon: "😴",
+    desc: "Chất lượng giấc ngủ, khó ngủ, mất ngủ",
+    subtitle: "Thang đo Chất lượng Giấc ngủ",
+    maxScore: 12,
+    questions: [
+      { text: "Thông thường, bạn mất bao lâu để bắt đầu đi vào giấc ngủ sau khi tắt đèn?",
+        options: [
+          { text: "Dưới 15 phút", score: 0 },
+          { text: "16–30 phút", score: 1 },
+          { text: "31–60 phút", score: 2 },
+          { text: "Trên 60 phút", score: 3 }
+        ] },
+      { text: "Bạn có thường xuyên bị thức giấc giữa đêm hoặc dậy quá sớm mà không ngủ lại được không?",
+        options: [
+          { text: "Không bao giờ", score: 0 },
+          { text: "1-2 lần/tuần", score: 1 },
+          { text: "3-4 lần/tuần", score: 2 },
+          { text: "Hầu như mỗi đêm", score: 3 }
+        ] },
+      { text: "Bạn tự đánh giá chất lượng giấc ngủ của mình gần đây như thế nào?",
+        options: [
+          { text: "Rất tốt", score: 0 },
+          { text: "Khá tốt", score: 1 },
+          { text: "Khá tồi", score: 2 },
+          { text: "Rất tồi", score: 3 }
+        ] },
+      { text: "Việc thiếu ngủ / mất ngủ làm ảnh hưởng đến năng lượng và sự tập trung ban ngày của bạn ở mức nào?",
+        options: [
+          { text: "Không ảnh hưởng", score: 0 },
+          { text: "Ảnh hưởng ít", score: 1 },
+          { text: "Ảnh hưởng nhiều", score: 2 },
+          { text: "Rất nghiêm trọng", score: 3 }
+        ] }
+    ],
+    levels: [
+      { max: 3, label: "Giấc ngủ tốt", badge: "low",
+        desc: "Giấc ngủ của bạn khá chất lượng, giúp phục hồi sức khỏe tốt.",
+        advice: [
+          "Duy trì giờ đi ngủ - thức dậy cố định mỗi ngày.",
+          "Hạn chế dùng điện thoại ngay trước khi ngủ."
+        ] },
+      { max: 7, label: "Rối loạn giấc ngủ nhẹ", badge: "mid",
+        desc: "Bạn đang gặp một số khó khăn về giấc ngủ, nên cải thiện thói quen ngủ.",
+        advice: [
+          "Tắt các thiết bị điện tử ít nhất 30-60 phút trước khi ngủ.",
+          "Hạn chế caffein (trà, cà phê, nước tăng lực) vào buổi chiều tối.",
+          "Giữ phòng ngủ yên tĩnh, tối và mát mẻ.",
+          "Tránh học bài hoặc lo nghĩ nhiều ngay trước giờ ngủ."
+        ] },
+      { max: 12, label: "Rối loạn giấc ngủ nghiêm trọng", badge: "high", severe: true,
+        desc: "Tình trạng mất ngủ đang ảnh hưởng khá nhiều đến thể chất và tinh thần của bạn.",
+        advice: [
+          "Ghi lại nhật ký giấc ngủ trong vài ngày để nhận diện nguyên nhân.",
+          "Nói chuyện với cha mẹ hoặc bác sĩ nếu tình trạng kéo dài trên 2-3 tuần.",
+          "Cân nhắc thăm khám chuyên khoa nếu mất ngủ ảnh hưởng nghiêm trọng đến việc học."
+        ] }
+    ]
+  },
+
+  loau: {
+    name: "Lo Âu",
+    icon: "😟",
+    desc: "Căng thẳng, lo lắng, bồn chồn kéo dài",
+    subtitle: "Thang đo Lo âu GAD-7",
+    options: OPT_LIKERT4,
+    maxScore: 21,
+    questions: [
+      { text: "Cảm thấy lo lắng, bồn chồn, căng thẳng hoặc bất an?" },
+      { text: "Không thể ngừng hoặc không kiểm soát được sự lo lắng?" },
+      { text: "Lo lắng quá nhiều về nhiều thứ khác nhau?" },
+      { text: "Khó thư giãn hoặc đầu óc luôn trong trạng thái gồng căng?" },
+      { text: "Bồn chồn đến mức khó ngồi yên một chỗ?" },
+      { text: "Trở nên dễ cáu gắt hoặc bực mình?" },
+      { text: "Cảm thấy sợ hãi như thể có điều gì đó tồi tệ sắp xảy ra?" }
+    ],
+    levels: [
+      { max: 4, label: "Lo âu tối thiểu", badge: "low",
+        desc: "Mức độ lo âu của bạn nằm trong giới hạn bình thường của cuộc sống.",
+        advice: [
+          "Tiếp tục duy trì các thói quen lành mạnh hiện tại.",
+          "Thử các bài tập hít thở khi thấy hơi căng thẳng."
+        ] },
+      { max: 9, label: "Lo âu nhẹ", badge: "low",
+        desc: "Bạn có một chút lo lắng, vẫn có thể tự điều chỉnh được.",
+        advice: [
+          "Thực hành hít thở sâu 4-7-8 khi cảm thấy lo lắng.",
+          "Vận động nhẹ (đi bộ, giãn cơ) mỗi ngày để giảm căng thẳng.",
+          "Viết ra điều đang khiến bạn lo lắng để nhìn nhận rõ hơn."
+        ] },
+      { max: 14, label: "Lo âu trung bình", badge: "mid",
+        desc: "Sự lo lắng đang ảnh hưởng đến khả năng tập trung và sinh hoạt của bạn.",
+        advice: [
+          "Chia sẻ với người thân/thầy cô về những điều đang khiến bạn lo lắng.",
+          "Hạn chế caffein và thức khuya vì có thể làm tăng cảm giác lo âu.",
+          "Cân nhắc gặp cán bộ tư vấn tâm lý học đường để được hỗ trợ thêm."
+        ] },
+      { max: 21, label: "Lo âu nặng", badge: "high", severe: true,
+        desc: "Mức lo âu đang ảnh hưởng nghiêm trọng đến sinh hoạt hằng ngày của bạn.",
+        advice: [
+          "Đừng cố gắng tự mình chịu đựng - hãy tìm hỗ trợ chuyên môn sớm.",
+          "Thông báo với cha mẹ/nhà trường về tình trạng hiện tại.",
+          "Ưu tiên gặp chuyên gia tâm lý hoặc bác sĩ chuyên khoa."
+        ] }
+    ]
+  },
+
+  tamtrang: {
+    name: "Tâm Trạng",
+    icon: "💭",
+    desc: "Buồn bã, chán nản, mất hứng thú",
+    subtitle: "Thang đo Trầm cảm PHQ-9",
+    options: OPT_LIKERT4,
+    maxScore: 27,
+    questions: [
+      { text: "Ít hứng thú hoặc không còn niềm vui trong các hoạt động thường ngày?" },
+      { text: "Cảm thấy buồn chán, nản lòng hoặc vô vọng?" },
+      { text: "Trằn trọc, khó ngủ, ngủ không sâu giấc hoặc ngủ quá nhiều?" },
+      { text: "Cảm thấy mệt mỏi, kiệt sức hoặc thiếu năng lượng?" },
+      { text: "Chán ăn hoặc ăn quá nhiều?" },
+      { text: "Cảm thấy tồi tệ về bản thân, hoặc cảm thấy mình làm gia đình thất vọng?" },
+      { text: "Khó tập trung vào việc học, đọc sách hoặc xem tivi?" },
+      { text: "Di chuyển/nói chậm chạp đến mức người khác nhận ra, hoặc ngược lại bồn chồn hơn bình thường?" },
+      { text: "Có suy nghĩ rằng thà chết đi còn hơn, hoặc muốn tự làm tổn thương bản thân?", isRiskItem: true }
+    ],
+    levels: [
+      { max: 4, label: "Tối thiểu / Không có", badge: "low",
+        desc: "Tâm trạng của bạn khá ổn định gần đây.",
+        advice: [
+          "Duy trì lối sống lành mạnh: ngủ đủ, vận động, ăn uống điều độ.",
+          "Tiếp tục kết nối với bạn bè, người thân."
+        ] },
+      { max: 9, label: "Trầm cảm nhẹ", badge: "low",
+        desc: "Bạn có một số biểu hiện buồn chán thoáng qua gần đây.",
+        advice: [
+          "Thực hành các bài tập thư giãn, chánh niệm (mindfulness) mỗi ngày.",
+          "Duy trì hoạt động thể chất nhẹ nhàng như đi bộ, đạp xe.",
+          "Chia sẻ cảm xúc với người bạn tin tưởng thay vì giữ trong lòng."
+        ] },
+      { max: 14, label: "Trầm cảm vừa", badge: "mid",
+        desc: "Tâm trạng của bạn cần được chú ý nhiều hơn trong thời gian tới.",
+        advice: [
+          "Nên trò chuyện với cán bộ tư vấn tâm lý học đường hoặc bác sĩ.",
+          "Tránh tự cô lập bản thân, dù bạn có thể muốn ở một mình.",
+          "Giữ đều đặn giờ giấc sinh hoạt (ngủ, ăn) dù tâm trạng không tốt."
+        ] },
+      { max: 19, label: "Trầm cảm nặng", badge: "high", severe: true,
+        desc: "Tình trạng đang ảnh hưởng rõ rệt đến sinh hoạt hằng ngày của bạn.",
+        advice: [
+          "Cần được hỗ trợ tâm lý chuyên môn trong thời gian sớm nhất.",
+          "Thông báo cho cha mẹ hoặc người giám hộ về tình trạng của mình.",
+          "Không nên tự mình đối mặt với giai đoạn này một mình."
+        ] },
+      { max: 27, label: "Trầm cảm rất nặng", badge: "high", severe: true,
+        desc: "Đây là dấu hiệu nghiêm trọng, bạn cần được hỗ trợ y tế/tâm lý ngay.",
+        advice: [
+          "Cần đến ngay cơ sở y tế chuyên khoa tâm thần/tâm lý gần nhất.",
+          "Không nên ở một mình trong giai đoạn này - hãy nhờ người thân đi cùng.",
+          "Liên hệ hotline hỗ trợ khẩn cấp nếu cần trò chuyện ngay lập tức."
+        ] }
+    ]
+  }
+};
+
+/* =========================================================================
+   TRẠNG THÁI & ĐIỀU HƯỚNG MÀN HÌNH
+   ========================================================================= */
+const SECTIONS = ["intro-section","safety-section","category-section","quiz-section","result-section","crisis-section","summary-section"];
+function showSection(id) {
+  SECTIONS.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+const results = {}; // { categoryKey: { score, level } }
+let currentCategoryKey = null;
+let currentQuestion = 0;
+let currentAnswers = [];
+
+/* ---------- Nhạc nền ---------- */
+document.getElementById("music-toggle").addEventListener("click", () => {
+  const music = document.getElementById("bg-music");
+  const btn = document.getElementById("music-toggle");
+  if (music.paused) {
+    music.play().catch(() => {});
+    btn.textContent = "🔊 Tắt nhạc";
+  } else {
+    music.pause();
+    btn.textContent = "🔈 Bật nhạc thư giãn";
+  }
+});
+
+/* ---------- 1. Bắt đầu -> Sàng lọc an toàn ---------- */
+document.getElementById("start-btn").addEventListener("click", () => {
+  startGenericQuiz({
+    questions: SAFETY_QUESTIONS,
+    options: OPT_012,
+    progressBarId: "safety-progress",
+    containerId: "safety-question-container",
+    sectionId: "safety-section",
+    prevBtnId: "safety-prev-btn",
+    nextBtnId: "safety-next-btn",
+    onDone: () => showCategoryScreen()
+  });
+});
+
+/* =========================================================================
+   ĐỘNG CƠ LÀM BÀI TEST DÙNG CHUNG (an toàn + 4 chủ đề)
+   ========================================================================= */
+let quizCtx = null;
+
+function startGenericQuiz(cfg) {
+  quizCtx = cfg;
+  currentQuestion = 0;
+  currentAnswers = new Array(cfg.questions.length).fill(null);
+  showSection(cfg.sectionId);
+  renderGenericQuestion();
+}
+
+function renderGenericQuestion() {
+  const cfg = quizCtx;
+  const q = cfg.questions[currentQuestion];
+  const opts = q.options || cfg.options;
+  const container = document.getElementById(cfg.containerId);
+
+  let optionsHtml = "";
+  opts.forEach(opt => {
+    const checked = currentAnswers[currentQuestion] === opt.score ? "checked" : "";
+    optionsHtml += `
+      <label class="option-label">
+        <input type="radio" name="genq" value="${opt.score}" ${checked}>
+        ${opt.text}
+      </label>`;
+  });
+
+  container.innerHTML = `
+    <div class="question-block">
+      <div class="question-text">Câu ${currentQuestion + 1}/${cfg.questions.length}: ${q.text}</div>
+      <div class="options">${optionsHtml}</div>
+    </div>`;
+
+  document.getElementById(cfg.progressBarId).style.width =
+    `${(currentQuestion / cfg.questions.length) * 100}%`;
+
+  document.getElementById(cfg.prevBtnId).style.visibility = currentQuestion === 0 ? "hidden" : "visible";
+  document.getElementById(cfg.nextBtnId).textContent =
+    currentQuestion === cfg.questions.length - 1 ? "Xem kết quả →" : "Tiếp theo →";
+}
+
+function wireQuizNav(prevBtnId, nextBtnId) {
+  document.getElementById(prevBtnId).addEventListener("click", () => {
+    if (!quizCtx) return;
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      renderGenericQuestion();
+    }
+  });
+
+  document.getElementById(nextBtnId).addEventListener("click", () => {
+    if (!quizCtx) return;
+    const cfg = quizCtx;
+    const selected = document.querySelector('input[name="genq"]:checked');
+    if (!selected) {
+      alert("Vui lòng chọn một đáp án trước khi tiếp tục nhé.");
+      return;
+    }
+    const value = parseInt(selected.value, 10);
+    currentAnswers[currentQuestion] = value;
+
+    const q = cfg.questions[currentQuestion];
+    if (q.isRiskItem && value > 0) {
+      showSection("crisis-section");
+      return;
+    }
+
+    if (currentQuestion < cfg.questions.length - 1) {
+      currentQuestion++;
+      renderGenericQuestion();
+    } else {
+      cfg.onDone(currentAnswers);
+    }
+  });
+}
+wireQuizNav("safety-prev-btn", "safety-next-btn");
+wireQuizNav("prev-btn", "next-btn");
+
+/* =========================================================================
+   3. MÀN HÌNH CHỌN CHỦ ĐỀ
+   ========================================================================= */
+function showCategoryScreen() {
+  const grid = document.getElementById("category-grid");
+  grid.innerHTML = "";
+  Object.keys(CATEGORIES).forEach(key => {
+    const cat = CATEGORIES[key];
+    const done = results[key];
+    let statusHtml;
+    if (done) {
+      const badge = done.level.badge;
+      statusHtml = `<span class="category-status status-done-${badge}">Đã xong · ${done.level.label}</span>`;
+    } else {
+      statusHtml = `<span class="category-status status-todo">Chưa làm</span>`;
+    }
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "category-card";
+    card.innerHTML = `
+      <span class="category-icon">${cat.icon}</span>
+      <div class="category-name">${cat.name}</div>
+      <div class="category-desc">${cat.desc}</div>
+      ${statusHtml}`;
+    card.addEventListener("click", () => startCategoryQuiz(key));
+    grid.appendChild(card);
+  });
+  showSection("category-section");
+}
+
+document.getElementById("to-summary-btn").addEventListener("click", showSummary);
+
+/* =========================================================================
+   4. BÀI TEST THEO CHỦ ĐỀ
+   ========================================================================= */
+function startCategoryQuiz(key) {
+  currentCategoryKey = key;
+  const cat = CATEGORIES[key];
+  document.getElementById("quiz-label").textContent = `${cat.icon} ${cat.name} · ${cat.subtitle}`;
+
+  startGenericQuiz({
+    questions: cat.questions,
+    options: cat.options,
+    progressBarId: "progress-fill",
+    containerId: "question-container",
+    sectionId: "quiz-section",
+    prevBtnId: "prev-btn",
+    nextBtnId: "next-btn",
+    onDone: (answers) => showCategoryResult(key, answers)
+  });
+}
+
+function showCategoryResult(key, answers) {
+  const cat = CATEGORIES[key];
+  const total = answers.reduce((s, v) => s + (v || 0), 0);
+  const level = cat.levels.find(l => total <= l.max) || cat.levels[cat.levels.length - 1];
+
+  results[key] = { score: total, max: cat.maxScore, level };
+
+  document.getElementById("result-badge").className = "result-badge badge-" + level.badge;
+  document.getElementById("result-badge").textContent = `${cat.name}: ${level.label}`;
+  document.getElementById("result-title").textContent = "Kết quả của bạn";
+  document.getElementById("result-desc").textContent = level.desc;
+  document.getElementById("solution-list").innerHTML =
+    level.advice.map(a => `<li>${a}</li>`).join("");
+
+  const reminderBox = document.getElementById("reminder-box");
+  const referralBox = document.getElementById("referral-box");
+  if (level.severe) {
+    reminderBox.classList.remove("hidden");
+    reminderBox.textContent = "⚠️ Kết quả cho thấy tình trạng của bạn đang khá nghiêm trọng. Đừng chần chừ — hãy tìm đến người hỗ trợ ngay hôm nay.";
+    referralBox.classList.remove("hidden");
+    referralBox.innerHTML = referralBoxHtml();
+  } else {
+    reminderBox.classList.add("hidden");
+    referralBox.classList.add("hidden");
+  }
+
+  showSection("result-section");
+}
+
+function referralBoxHtml() {
+  return `
+    <h3>Bạn có thể tìm đến</h3>
+    <ul>
+      <li>Phòng/Tổ Tham vấn tâm lý học đường tại trường bạn đang học.</li>
+      <li>Khoa/Viện Sức khỏe Tâm thần tại bệnh viện tuyến tỉnh, thành phố nơi bạn sinh sống.</li>
+      <li>Bệnh viện chuyên khoa Tâm thần tại địa phương.</li>
+      <li>📞 <a href="tel:111">Tổng đài quốc gia bảo vệ trẻ em 111</a> (miễn phí, 24/7, có tư vấn tâm lý).</li>
+      <li>🚑 Trường hợp khẩn cấp, gọi ngay <a href="tel:115">115</a>.</li>
+    </ul>`;
+}
+
+document.getElementById("back-to-category-btn").addEventListener("click", showCategoryScreen);
+document.getElementById("result-to-summary-btn").addEventListener("click", showSummary);
+
+/* =========================================================================
+   6. CẢNH BÁO KHẨN CẤP
+   ========================================================================= */
+document.getElementById("crisis-home-btn").addEventListener("click", () => {
+  quizCtx = null;
+  showSection("intro-section");
+});
+
+/* =========================================================================
+   7. TỔNG KẾT
+   ========================================================================= */
+function showSummary() {
+  const list = document.getElementById("summary-list");
+  const keys = Object.keys(results);
+
+  if (keys.length === 0) {
+    list.innerHTML = `<p>Bạn chưa hoàn thành chủ đề nào. Hãy quay lại chọn một chủ đề để bắt đầu nhé.</p>`;
+  } else {
+    list.innerHTML = keys.map(key => {
+      const cat = CATEGORIES[key];
+      const r = results[key];
+      return `<div class="summary-item">
+        <span class="cat-name">${cat.icon} ${cat.name}</span>
+        <span class="category-status status-done-${r.level.badge}">${r.level.label}</span>
+      </div>`;
+    }).join("");
+  }
+
+  const anySevere = keys.some(key => results[key].level.severe);
+  const reminderBox = document.getElementById("summary-reminder-box");
+  const referralBox = document.getElementById("summary-referral-box");
+  const message = document.getElementById("summary-message");
+
+  if (anySevere) {
+    reminderBox.classList.remove("hidden");
+    reminderBox.textContent = "⚠️ Một hoặc nhiều kết quả của bạn đang ở mức cần chú ý nghiêm túc. Hãy chủ động tìm đến sự hỗ trợ, đừng chờ đợi.";
+    referralBox.classList.remove("hidden");
+    referralBox.innerHTML = referralBoxHtml();
+    message.textContent = "Bạn đã rất dũng cảm khi nhìn thẳng vào cảm xúc của mình. Hãy để người khác đồng hành cùng bạn trong giai đoạn này.";
+  } else if (keys.length > 0) {
+    reminderBox.classList.add("hidden");
+    referralBox.classList.add("hidden");
+    message.textContent = "Cảm ơn bạn đã dành thời gian quan tâm đến bản thân. Hãy tiếp tục chăm sóc sức khỏe tinh thần của mình mỗi ngày nhé!";
+  } else {
+    reminderBox.classList.add("hidden");
+    referralBox.classList.add("hidden");
+    message.textContent = "";
+  }
+
+  showSection("summary-section");
+}
+
+document.getElementById("summary-back-btn").addEventListener("click", showCategoryScreen);
+document.getElementById("restart-btn").addEventListener("click", () => {
+  Object.keys(results).forEach(k => delete results[k]);
+  quizCtx = null;
+  showSection("intro-section");
+});
+</script>
+
 </body>
 </html>
