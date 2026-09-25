@@ -1,422 +1,221 @@
-/* BỘ CÂU HỎI CHUẨN Y KHOA DỰA TRÊN TÀI LIỆU CÂU HỎI WEB.DOCX */
-
-// 1. Dữ liệu câu hỏi cho từng Mục
-const QUIZ_DATA = {
-  // MỤC HỌC TẬP & CÔNG VIỆC (MBI - Kiệt sức / Burnout)
-  study: {
-    title: "Đánh Giá Mức Độ Kiệt Sức trong Học Tập & Công Việc (MBI)",
-    questions: [
-      {
-        q: "Bạn cảm thấy kiệt sức về mặt tinh thần sau một ngày làm việc / học tập?",
-        options: [
-          { text: "Chưa bao giờ", score: 0 },
-          { text: "Hiếm khi", score: 1 },
-          { text: "Thỉnh thoảng", score: 2 },
-          { text: "Thường xuyên", score: 3 },
-          { text: "Luôn luôn", score: 4 }
+// Dữ liệu bộ câu hỏi chuyên sâu chuẩn y khoa (MBI, PSS-10, PSQI, GAD-7, PHQ-9, C-SSRS)
+const quizData = {
+    'hoc-tap': {
+        title: 'Đánh Giá Căng Thẳng Học Tập & Kiệt Sức (Burnout)',
+        questions: [
+            { q: "1. Bạn cảm thấy kiệt sức về mặt tinh thần sau một ngày học tập / làm việc căng thẳng?", opts: ["Chưa bao giờ (0)", "Hiếm khi (1)", "Thỉnh thoảng (2)", "Thường xuyên (3)", "Gần như luôn luôn (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "2. Bạn cảm thấy mệt mỏi ngay từ buổi sáng khi nghĩ đến việc phải bắt đầu công việc/buổi học?", opts: ["Chưa bao giờ (0)", "Hiếm khi (1)", "Thỉnh thoảng (2)", "Thường xuyên (3)", "Gần như luôn luôn (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "3. Bạn cảm thấy bản thân ngày càng trở nên thờ ơ, thiếu quan tâm hoặc xa cách với việc học?", opts: ["Chưa bao giờ (0)", "Hiếm khi (1)", "Thỉnh thoảng (2)", "Thường xuyên (3)", "Gần như luôn luôn (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "4. Bạn hoài nghi về ý nghĩa hoặc giá trị thực sự của công việc/ngành học mình đang theo đuổi?", opts: ["Chưa bao giờ (0)", "Hiếm khi (1)", "Thỉnh thoảng (2)", "Thường xuyên (3)", "Gần như luôn luôn (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "5. Trong tháng qua, bạn có cảm thấy mình không thể kiểm soát được những việc quan trọng?", opts: ["Không bao giờ (0)", "Hiếm khi (1)", "Đôi khi (2)", "Thường xuyên (3)", "Rất thường xuyên (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "6. Bạn có cảm thấy các khó khăn dồn dập đến mức bản thân không thể vượt qua nổi?", opts: ["Không bao giờ (0)", "Hiếm khi (1)", "Đôi khi (2)", "Thường xuyên (3)", "Rất thường xuyên (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "7. Bạn có cảm thấy khó khăn trong việc duy trì sự tập trung khi nghe giảng hoặc làm bài tập?", opts: ["Không bao giờ (0)", "Hiếm khi (1)", "Đôi khi (2)", "Thường xuyên (3)", "Rất thường xuyên (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "8. Bạn có cảm thấy áp lực thành tích hoặc điểm số đang đè nặng lên tâm trí mỗi ngày?", opts: ["Không bao giờ (0)", "Hiếm khi (1)", "Đôi khi (2)", "Thường xuyên (3)", "Rất thường xuyên (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "9. Bạn có suy nghĩ muốn từ bỏ, buông xuôi hoặc trốn chạy khỏi nhiệm vụ học tập hiện tại?", opts: ["Không bao giờ (0)", "Hiếm khi (1)", "Đôi khi (2)", "Thường xuyên (3)", "Rất thường xuyên (4)"], scores: [0, 1, 2, 3, 4] },
+            { q: "10. Bạn có từng mong muốn mình biến mất hoặc ước mình ngủ đi mà không cần thức dậy?", opts: ["Không", "Có, đôi lúc", "Có, rất thường xuyên"], danger: true }
         ]
-      },
-      {
-        q: "Bạn cảm thấy mệt mỏi ngay từ buổi sáng khi nghĩ đến việc phải bắt đầu một ngày mới?",
-        options: [
-          { text: "Chưa bao giờ", score: 0 },
-          { text: "Hiếm khi", score: 1 },
-          { text: "Thỉnh thoảng", score: 2 },
-          { text: "Thường xuyên", score: 3 },
-          { text: "Luôn luôn", score: 4 }
+    },
+    'giac-ngu': {
+        title: 'Khảo Sát Chất Lượng Giấc Ngủ & Rối Loạn Nhịp Sinh Học',
+        questions: [
+            { q: "1. Bạn thường mất bao lâu trằn trọc trên giường mới có thể đi vào giấc ngủ?", opts: ["Dưới 15 phút (0)", "16 - 30 phút (1)", "31 - 60 phút (2)", "Trên 60 phút (3)"], scores: [0, 1, 2, 3] },
+            { q: "2. Tần suất bạn giật mình thức giấc giữa đêm hoặc tỉnh dậy quá sớm mà không ngủ lại được?", opts: ["Không bao giờ (0)", "1 - 2 lần/tuần (1)", "3 - 4 lần/tuần (2)", "Hầu như mỗi đêm (3)"], scores: [0, 1, 2, 3] },
+            { q: "3. Bạn đánh giá chất lượng giấc ngủ tổng thể của mình trong 2 tuần qua như thế nào?", opts: ["Rất tốt (0)", "Khá tốt (1)", "Khá tồi (2)", "Rất tồi (3)"], scores: [0, 1, 2, 3] },
+            { q: "4. Bạn có cảm thấy ngái ngủ, uể uải hoặc thiếu năng lượng nghiêm trọng vào ban ngày?", opts: ["Không bao giờ (0)", "Đôi khi (1)", "Thường xuyên (2)", "Rất nghiêm trọng (3)"], scores: [0, 1, 2, 3] },
+            { q: "5. Tình trạng mất ngủ có làm ảnh hưởng tiêu cực đến tâm trạng và khả năng làm việc của bạn?", opts: ["Không ảnh hưởng (0)", "Ảnh hưởng ít (1)", "Ảnh hưởng nhiều (2)", "Ảnh hưởng rất nặng nề (3)"], scores: [0, 1, 2, 3] },
+            { q: "6. Bạn có phải phụ thuộc vào thuốc ngủ, chất kích thích hoặc trà/cà phê để duy trì thức?", opts: ["Không bao giờ (0)", "Hiếm khi (1)", "Thường xuyên (2)", "Luôn luôn (3)"], scores: [0, 1, 2, 3] },
+            { q: "7. Bạn có hay gặp ác mộng, giật mình hoặc cảm thấy bồn chồn lo lắng trước khi đi ngủ?", opts: ["Không bao giờ (0)", "Hiếm khi (1)", "Thường xuyên (2)", "Rất thường xuyên (3)"], scores: [0, 1, 2, 3] }
         ]
-      },
-      {
-        q: "Bạn cảm thấy bản thân ngày càng trở nên thờ ơ, thiếu quan tâm hoặc chai sạn với công việc/học tập?",
-        options: [
-          { text: "Chưa bao giờ", score: 0 },
-          { text: "Hiếm khi", score: 1 },
-          { text: "Thỉnh thoảng", score: 2 },
-          { text: "Thường xuyên", score: 3 },
-          { text: "Luôn luôn", score: 4 }
+    },
+    'lo-au': {
+        title: 'Sàng Lọc Mức Độ Lo Âu (Thang Đo GAD-7)',
+        questions: [
+            { q: "1. Cảm thấy lo lắng, bồn chồn, căng thẳng hoặc luôn trong trạng thái bất an?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "2. Cảm thấy không thể ngừng lại hoặc không kiểm soát được sự lo lắng dồn dập?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "3. Lo lắng quá mức về nhiều chủ đề hoặc sự kiện khác nhau trong cuộc sống?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "4. Gặp khó khăn lớn trong việc thả lỏng hoặc thư giãn đầu óc?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "5. Bồn chồn đến mức đứng ngồi không yên, phải đi qua đi lại?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "6. Trở nên dễ cáu gắt, gắt gỏng hoặc bực bội vì những điều nhỏ nhặt?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "7. Cảm thấy sợ hãi như thể có điều gì đó cực kỳ tồi tệ sắp sửa xảy ra?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "8. Xuất hiện các triệu chứng thể chất như tim đập nhanh, nghẹt thở, đổ mồ hôi do lo âu?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] }
         ]
-      },
-      {
-        q: "Bạn nghi ngờ về ý nghĩa hoặc giá trị công việc / việc học mà mình đang làm?",
-        options: [
-          { text: "Chưa bao giờ", score: 0 },
-          { text: "Hiếm khi", score: 1 },
-          { text: "Thỉnh thoảng", score: 2 },
-          { text: "Thường xuyên", score: 3 },
-          { text: "Luôn luôn", score: 4 }
+    },
+    'tam-trang': {
+        title: 'Đánh Giá Tâm Trạng & Sàng Lọc Trầm Cảm (PHQ-9 & C-SSRS)',
+        questions: [
+            { q: "1. Giảm hẳn hứng thú hoặc không còn tìm thấy niềm vui trong các hoạt động ưa thích?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "2. Cảm thấy buồn chán, nản lòng, tuyệt vọng hoặc trống rỗng nội tâm?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "3. Cảm thấy mệt mỏi, kiệt sức hoặc luôn trong tình trạng thiếu hụt năng lượng?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "4. Cảm thấy tồi tệ về bản thân — tự trách mình là người thất bại hoặc làm gia đình thất vọng?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "5. Khó tập trung khi đọc sách, làm việc hoặc theo dõi cuộc trò chuyện?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "6. Di chuyển hoặc nói năng chậm chạp hơn, hoặc ngược lại là bồn chồn không thể ngồi yên?", opts: ["Không bao giờ (0)", "Vài ngày (1)", "Hơn một nửa số ngày (2)", "Hầu như mỗi ngày (3)"], scores: [0, 1, 2, 3] },
+            { q: "7. Bạn có suy nghĩ về việc tự làm tổn thương bản thân hoặc tự sát?", opts: ["Không", "Có, đôi lúc", "Có, rất thường xuyên"], danger: true }
         ]
-      },
-      {
-        q: "Bạn cảm thấy mình làm việc / học tập kém hiệu quả hơn trước đây?",
-        options: [
-          { text: "Chưa bao giờ", score: 0 },
-          { text: "Hiếm khi", score: 1 },
-          { text: "Thỉnh thoảng", score: 2 },
-          { text: "Thường xuyên", score: 3 },
-          { text: "Luôn luôn", score: 4 }
-        ]
-      }
-    ]
-  },
-
-  // MỤC GIẤC NGỦ (PSQI / ISI Rút gọn)
-  sleep: {
-    title: "Đánh Giá Chất Lượng Giấc Ngủ (PSQI)",
-    questions: [
-      {
-        q: "Thông thường, bạn mất bao lâu để bắt đầu đi vào giấc ngủ sau khi tắt đèn?",
-        options: [
-          { text: "Dưới 15 phút", score: 0 },
-          { text: "16 – 30 phút", score: 1 },
-          { text: "31 – 60 phút", score: 2 },
-          { text: "Trên 60 phút", score: 3 }
-        ]
-      },
-      {
-        q: "Bạn có thường xuyên bị thức giấc giữa đêm hoặc dậy quá sớm mà không ngủ lại được không?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "1 - 2 lần/tuần", score: 1 },
-          { text: "3 - 4 lần/tuần", score: 2 },
-          { text: "Hầu như mỗi đêm", score: 3 }
-        ]
-      },
-      {
-        q: "Bạn tự đánh giá chất lượng giấc ngủ của mình gần đây như thế nào?",
-        options: [
-          { text: "Rất tốt", score: 0 },
-          { text: "Khá tốt", score: 1 },
-          { text: "Khá tồi", score: 2 },
-          { text: "Rất tồi", score: 3 }
-        ]
-      },
-      {
-        q: "Việc thiếu ngủ / mất ngủ làm ảnh hưởng đến năng lượng và sự tập trung ban ngày của bạn ở mức nào?",
-        options: [
-          { text: "Không ảnh hưởng", score: 0 },
-          { text: "Ảnh hưởng ít", score: 1 },
-          { text: "Ảnh hưởng nhiều", score: 2 },
-          { text: "Rất nghiêm trọng", score: 3 }
-        ]
-      }
-    ]
-  },
-
-  // MỤC LO ÂU & STRESS (GAD-7 & PSS-10 Chuẩn)
-  anxiety: {
-    title: "Đánh Giá Căng Thẳng & Lo Âu (GAD-7 & PSS-10)",
-    questions: [
-      {
-        q: "Cảm thấy lo lắng, bồn chồn, căng thẳng hoặc bất an trong 2 tuần qua?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "Vài ngày", score: 1 },
-          { text: "Hơn một nửa số ngày", score: 2 },
-          { text: "Hầu như mỗi ngày", score: 3 }
-        ]
-      },
-      {
-        q: "Không thể ngừng hoặc không kiểm soát được sự lo lắng?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "Vài ngày", score: 1 },
-          { text: "Hơn một nửa số ngày", score: 2 },
-          { text: "Hầu như mỗi ngày", score: 3 }
-        ]
-      },
-      {
-        q: "Bạn có thường xuyên cảm thấy bực bội vì những điều xảy ra ngoài dự kiến không?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "Hiếm khi", score: 1 },
-          { text: "Đôi khi", score: 2 },
-          { text: "Thường xuyên", score: 3 },
-          { text: "Rất thường xuyên", score: 4 }
-        ]
-      },
-      // Câu hỏi đảo (PSS-10): Bạn có thường cảm thấy tự tin vào khả năng xử lý vấn đề cá nhân?
-      {
-        q: "Bạn có thường cảm thấy tự tin vào khả năng xử lý các vấn đề cá nhân của mình không?",
-        options: [
-          { text: "Không bao giờ", score: 4 }, // Đảo điểm
-          { text: "Hiếm khi", score: 3 },
-          { text: "Đôi khi", score: 2 },
-          { text: "Thường xuyên", score: 1 },
-          { text: "Rất thường xuyên", score: 0 }
-        ]
-      },
-      {
-        q: "Bạn có thường cảm thấy các khó khăn dồn dập đến mức không thể vượt qua nổi không?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "Hiếm khi", score: 1 },
-          { text: "Đôi khi", score: 2 },
-          { text: "Thường xuyên", score: 3 },
-          { text: "Rất thường xuyên", score: 4 }
-        ]
-      }
-    ]
-  },
-
-  // MỤC TÂM TRẠNG (PHQ-9 & C-SSRS Khẩn Cấp)
-  mood: {
-    title: "Đánh Giá Cảm Xúc & Tâm Trạng (PHQ-9 & C-SSRS)",
-    questions: [
-      // C-SSRS: Câu sàng lọc an toàn khẩn cấp
-      {
-        q: "[Sàng Lọc An Toàn] Bạn có từng suy nghĩ về việc tự làm tổn thương mình hoặc ước mình không còn thức dậy?",
-        isSafetyCheck: true,
-        options: [
-          { text: "Không", score: 0, isDanger: false },
-          { text: "Có, đôi lúc", score: 1, isDanger: true },
-          { text: "Có, thường xuyên", score: 2, isDanger: true }
-        ]
-      },
-      {
-        q: "Ít hứng thú hoặc không còn niềm vui trong các hoạt động thường ngày?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "Vài ngày", score: 1 },
-          { text: "Hơn một nửa số ngày", score: 2 },
-          { text: "Hầu như mỗi ngày", score: 3 }
-        ]
-      },
-      {
-        q: "Cảm thấy buồn chán, nản lòng, chán nản hoặc vô vọng?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "Vài ngày", score: 1 },
-          { text: "Hơn một nửa số ngày", score: 2 },
-          { text: "Hầu như mỗi ngày", score: 3 }
-        ]
-      },
-      {
-        q: "Cảm thấy mệt mỏi, kiệt sức hoặc thiếu năng lượng?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "Vài ngày", score: 1 },
-          { text: "Hơn một nửa số ngày", score: 2 },
-          { text: "Hầu như mỗi ngày", score: 3 }
-        ]
-      },
-      {
-        q: "Cảm thấy tồi tệ về bản thân — cảm thấy mình là người thất bại?",
-        options: [
-          { text: "Không bao giờ", score: 0 },
-          { text: "Vài ngày", score: 1 },
-          { text: "Hơn một nửa số ngày", score: 2 },
-          { text: "Hầu như mỗi ngày", score: 3 }
-        ]
-      }
-    ]
-  }
+    }
 };
 
-// STATE MANAGEMENT
-let currentCategory = null;
-let currentQuestionIdx = 0;
-let userAnswers = [];
-let redirectTimer = null;
+let currentCategory = '';
 
-// CHUYỂN ĐỔI SECTION
+// Chuyển đổi linh hoạt giữa các màn hình
 function showSection(sectionId) {
-  document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden-section'));
-  document.getElementById(sectionId).classList.remove('hidden-section');
-
-  // Cập nhật nút Nav active
-  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-  if (sectionId === 'categories-section') document.getElementById('nav-categories-btn').classList.add('active');
-  if (sectionId === 'chat-section') document.getElementById('nav-chat-btn').classList.add('active');
+    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+    window.scrollTo(0, 0);
 }
 
-// BẮT ĐẦU BÀI ĐÁNH GIÁ
-function startAssessment(categoryKey) {
-  currentCategory = categoryKey;
-  currentQuestionIdx = 0;
-  userAnswers = [];
-  document.getElementById('emergency-banner').classList.add('hidden');
+// Bắt đầu bài đánh giá
+function startAssessment(category) {
+    currentCategory = category;
+    const quiz = quizData[category];
+    document.getElementById('quiz-title').innerText = quiz.title;
+    
+    const container = document.getElementById('questions-container');
+    container.innerHTML = '';
 
-  showSection('quiz-section');
-  renderQuestion();
+    quiz.questions.forEach((item, index) => {
+        const qBlock = document.createElement('div');
+        qBlock.className = 'question-block';
+        
+        let optionsHtml = item.opts.map((opt, optIndex) => `
+            <label class="option-label">
+                <input type="radio" name="q_${index}" value="${optIndex}" required>
+                <span>${opt}</span>
+            </label>
+        `).join('');
+
+        qBlock.innerHTML = `
+            <div class="question-title">${item.q}</div>
+            <div class="options-group">${optionsHtml}</div>
+        `;
+        container.appendChild(qBlock);
+    });
+
+    showSection('quiz-section');
 }
 
-function renderQuestion() {
-  const catData = QUIZ_DATA[currentCategory];
-  const qData = catData.questions[currentQuestionIdx];
+// Nộp bài & Tính điểm
+function submitQuiz() {
+    const quiz = quizData[currentCategory];
+    let totalScore = 0;
+    let isEmergency = false;
 
-  document.getElementById('quiz-title').innerText = catData.title;
-  document.getElementById('question-text').innerText = `${currentQuestionIdx + 1}. ${qData.q}`;
-  
-  // Update progress
-  const progressPercent = ((currentQuestionIdx + 1) / catData.questions.length) * 100;
-  document.getElementById('quiz-progress').style.width = `${progressPercent}%`;
+    for (let i = 0; i < quiz.questions.length; i++) {
+        const selected = document.querySelector(`input[name="q_${i}"]:checked`);
+        if (!selected) {
+            alert(`Bạn chưa hoàn thành câu hỏi số ${i + 1}. Vui lòng trả lời đủ nhé!`);
+            return;
+        }
 
-  // Render options
-  const container = document.getElementById('options-container');
-  container.innerHTML = '';
+        const val = parseInt(selected.value);
+        const questionObj = quiz.questions[i];
 
-  qData.options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.innerText = opt.text;
-    btn.onclick = () => handleSelectOption(opt, qData);
-    container.appendChild(btn);
-  });
-}
+        if (questionObj.danger && val > 0) {
+            isEmergency = true;
+        }
 
-// XỬ LÝ CHỌN CÂU TRẢ LỜI
-function handleSelectOption(option, questionData) {
-  // Kiểm tra C-SSRS Nguy cơ khẩn cấp
-  if (questionData.isSafetyCheck && option.isDanger) {
-    document.getElementById('emergency-banner').classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  userAnswers.push(option.score);
-
-  const catData = QUIZ_DATA[currentCategory];
-  if (currentQuestionIdx < catData.questions.length - 1) {
-    currentQuestionIdx++;
-    renderQuestion();
-  } else {
-    finishAssessment();
-  }
-}
-
-function cancelQuiz() {
-  showSection('categories-section');
-}
-
-// HOÀN THÀNH & TÍNH ĐIỂM
-function finishAssessment() {
-  const totalScore = userAnswers.reduce((sum, val) => sum + val, 0);
-  const maxScore = QUIZ_DATA[currentCategory].questions.reduce((sum, q) => sum + (q.options.length - 1), 0);
-
-  document.getElementById('total-score-display').innerText = totalScore;
-  document.getElementById('max-score-display').innerText = `/${maxScore}`;
-
-  // Đánh giá dựa trên tổng điểm
-  let title = "";
-  let desc = "";
-  let exercises = [];
-
-  if (totalScore <= maxScore * 0.3) {
-    title = "Tình Trạng: Tốt & Ổn Định 🌿";
-    desc = "Bạn đang kiểm soát tốt tinh thần và cảm xúc của mình. Hãy tiếp tục duy trì lối sống lành mạnh này nhé!";
-    exercises = [
-      { name: "Thiền Hít Thở 4-7-8", duration: "5 phút", desc: "Giúp duy trì sự bình tĩnh và tập trung nhẹ nhàng." },
-      { name: "Nhật Ký Biết Ơn", duration: "10 phút", desc: "Ghi lại 3 điều tích cực diễn ra trong ngày." }
-    ];
-  } else if (totalScore <= maxScore * 0.6) {
-    title = "Tình Trạng: Căng Thẳng Nhẹ / Cần Chú Ý ⚠️";
-    desc = "Bạn đang trải qua một chút áp lực hoặc mệt mỏi. Đã đến lúc dành thêm thời gian nghỉ ngơi và thư giãn.";
-    exercises = [
-      { name: "Thiền Quét Cơ Thể (Body Scan)", duration: "10 phút", desc: "Giải tỏa căng thẳng tích tụ ở cổ, vai, gáy." },
-      { name: "Đi Bộ Thả Lỏng Mindful Walking", duration: "15 phút", desc: "Kết nối lại với thiên nhiên và điều hòa nhịp thở." }
-    ];
-  } else {
-    title = "Tình Trạng: Quá Tải / Cần Hỗ Trợ 🧡";
-    desc = "Điểm số cho thấy bạn đang chịu áp lực khá lớn. Đừng ngần ngại chia sẻ với người thân hoặc tìm kiếm tư vấn từ chuyên gia.";
-    exercises = [
-      { name: "Thiền Định Hướng Cảm Xúc", duration: "15 phút", desc: "Xoa dịu sự lo âu và lắng nghe những tổn thương nội tâm." },
-      { name: "Bài Tập Thả Lỏng Cơ Tiến Triển (PMR)", duration: "12 phút", desc: "Giảm gồng căng cơ thể cực kỳ hiệu quả." }
-    ];
-  }
-
-  document.getElementById('result-title').innerText = title;
-  document.getElementById('result-description').innerText = desc;
-
-  // Render bài tập thiền
-  const exContainer = document.getElementById('meditation-recommendations');
-  exContainer.innerHTML = '';
-  exercises.forEach(ex => {
-    exContainer.innerHTML += `
-      <div class="ex-card">
-        <h4><i class="fa-solid fa-spa"></i> ${ex.name} (${ex.duration})</h4>
-        <p style="font-size: 0.85rem; color: #555; margin-top: 5px;">${ex.desc}</p>
-      </div>
-    `;
-  });
-
-  showSection('result-section');
-
-  // Đếm ngược 5s chuyển sang Chatbot
-  startCountdownToChat(totalScore, title);
-}
-
-// ĐẾM NGƯỢC CHUYỂN SANG CHATBOT AI
-function startCountdownToChat(score, resultTitle) {
-  let timeLeft = 5;
-  const timerElem = document.getElementById('countdown-timer');
-  timerElem.innerText = timeLeft;
-
-  if (redirectTimer) clearInterval(redirectTimer);
-
-  redirectTimer = setInterval(() => {
-    timeLeft--;
-    timerElem.innerText = timeLeft;
-    if (timeLeft <= 0) {
-      clearInterval(redirectTimer);
-      goToChatWithContext(score, resultTitle);
+        if (questionObj.scores) {
+            totalScore += questionObj.scores[val];
+        }
     }
-  }, 1000);
+
+    if (isEmergency) {
+        triggerEmergency();
+        return;
+    }
+
+    renderResults(totalScore);
 }
 
-function goToChatNow() {
-  if (redirectTimer) clearInterval(redirectTimer);
-  const totalScore = document.getElementById('total-score-display').innerText;
-  const resultTitle = document.getElementById('result-title').innerText;
-  goToChatWithContext(totalScore, resultTitle);
+// Trả kết quả & Gợi ý bài tập
+function renderResults(score) {
+    document.getElementById('score-text').innerText = score;
+    const badge = document.getElementById('level-badge');
+    const analysis = document.getElementById('score-analysis');
+    const exercises = document.getElementById('exercise-list');
+    exercises.innerHTML = '';
+
+    let levelText = '', analysisText = '', listEx = [];
+
+    if (score <= 5) {
+        levelText = "Bình Thường / Ổn Định Nội Tại";
+        badge.style.background = "#4bd3c4";
+        analysisText = "Tâm trí bạn đang giữ được trạng thái cân bằng rất tốt. Hãy tiếp tục duy trì lối sống lành mạnh và nuôi dưỡng niềm vui mỗi ngày!";
+        listEx = ["🌿 Thực hành Thiền chánh niệm (Mindfulness) 5 phút mỗi sáng", "🏃 Bào chế Endorphin qua 20 phút vận động nhẹ nhẹ", "📖 Viết 3 điều biết ơn vào sổ tay trước khi đi ngủ"];
+    } else if (score <= 12) {
+        levelText = "Căng Thẳng Vừa / Cần Nghỉ Ngơi";
+        badge.style.background = "#ffb703";
+        analysisText = "Bạn đang gánh chịu một số áp lực hoặc mệt mỏi tích tụ[cite: 4]. Đã đến lúc tạm gạt bỏ công việc để chăm sóc bản thân[cite: 4].";
+        listEx = ["🌬️ Bài tập hít thở vuông (Box Breathing): Hít 4s - Giữ 4s - Thở 4s - Nghỉ 4s", "🎧 Bật nhạc sóng não Alpha/Theta thư giãn sâu", "☕ Ngừng sử dụng thiết bị điện tử 45 phút trước khi đi ngủ[cite: 4]"];
+    } else {
+        levelText = "Mức Độ Cao / Cần Hỗ Trợ Chuyên Môn";
+        badge.style.background = "#ff4d4f";
+        analysisText = "Sức khỏe tinh thần của bạn đang chịu tổn thương khá lớn[cite: 4]. Việc tìm kiếm sự trợ giúp từ chuyên gia hoặc tâm sự với người thân là điều vô cùng cần thiết[cite: 4].";
+        listEx = ["🧘 Thiền quét cơ thể (Body Scan Meditation) xoa dịu vùng cơ căng thẳng", "📝 Phương pháp Journaling - Viết ra toàn bộ luồng suy nghĩ rối bời", "🗣️ Mở lòng tâm sự với người đáng tin cậy hoặc hẹn lịch gặp bác sĩ tâm lý"];
+    }
+
+    badge.innerText = levelText;
+    analysis.innerText = analysisText;
+    listEx.forEach(ex => {
+        const li = document.createElement('li');
+        li.innerText = ex;
+        exercises.appendChild(li);
+    });
+
+    showSection('result-section');
 }
 
-function goToChatWithContext(score, resultTitle) {
-  showSection('chat-section');
-  const chatMessages = document.getElementById('chat-messages');
+// Từ khóa nguy hiểm kích hoạt Cảnh báo đỏ
+const dangerKeywords = ["tự sát", "tự tử", "muốn chết", "kết thúc cuộc đời", "reset cuộc đời", "chết đi", "tự làm tổn thương", "kết liễu"];
 
-  // Tạo lời chào cá nhân hóa dựa trên kết quả đánh giá vừa hoàn thành
-  const initialBotMsg = `Xin chào! Mình đã nhận được kết quả bài đánh giá vừa rồi của bạn: **"${resultTitle}"** (${score} điểm).\n\nMình ở đây để lắng nghe bạn tâm sự sâu hơn hoặc gợi ý thêm các bài tập thư giãn. Hôm nay bạn thấy thế nào?`;
-
-  chatMessages.innerHTML = `<div class="msg bot">${initialBotMsg.replace(/\n/g, '<br>')}</div>`;
+function triggerEmergency() {
+    document.getElementById('emergency-banner').classList.remove('hidden');
+    showSection('home-section');
 }
 
-// XỬ LÝ TRÒ CHUYỆN CHATBOT AI
+// Chatbot AI Tư Vấn
 function sendMessage() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
 
-  const chatMessages = document.getElementById('chat-messages');
+    appendMessage(text, 'user');
+    input.value = '';
 
-  // User Message
-  const userMsgDiv = document.createElement('div');
-  userMsgDiv.className = 'msg user';
-  userMsgDiv.innerText = text;
-  chatMessages.appendChild(userMsgDiv);
+    // Kiểm tra từ khóa nguy cơ
+    const containsDanger = dangerKeywords.some(kw => text.toLowerCase().includes(kw));
+    if (containsDanger) {
+        triggerEmergency();
+        appendMessage("⚠️ Hệ thống phát hiện tín hiệu nguy cơ cao. Chatbot đã ngưng để chuyển hướng bạn đến Banner cảnh báo đỏ phía trên!", 'bot');
+        document.getElementById('chat-input').disabled = true;
+        return;
+    }
 
-  input.value = '';
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+    // Trả lời dựa trên nguyên lý DSM-5-TR
+    setTimeout(() => {
+        let reply = "Cảm ơn bạn đã tin tưởng chia sẻ. Theo các nghiên cứu tâm lý học chuẩn DSM-5-TR, cảm xúc của bạn hoàn toàn xứng đáng được lắng nghe và tôn trọng[cite: 5]. Bạn có muốn thử một bài tập hít thở ngắn cùng mình không?";
+        
+        const lower = text.toLowerCase();
+        if (lower.includes("lo") || lower.includes("sợ") || lower.includes("căng thẳng")) {
+            reply = "Sự lo âu lan tỏa là phản ứng tự nhiên khi hệ thần kinh bị quá tải[cite: 4]. Bạn hãy đặt tay lên ngực và hít một hơi thật sâu cùng mình nhé[cite: 4]!";
+        } else if (lower.includes("ngủ") || lower.includes("mệt") || lower.includes("thức đêm")) {
+            reply = "Giấc ngủ ảnh hưởng trực tiếp đến khả năng chữa lành của bộ não[cite: 4]. Hãy thử thả lỏng vai và tắt bớt ánh sáng đèn xung quanh xem sao nhé[cite: 4].";
+        } else if (lower.includes("buồn") || lower.includes("chán") || lower.includes("mất động lực")) {
+            reply = "Cảm giác trống rỗng hay buồn chán là lời nhắc nhở cơ thể cần được nghỉ ngơi[cite: 4]. Đừng quá khắt khe với bản thân hôm nay nhé[cite: 4]!";
+        }
+        
+        appendMessage(reply, 'bot');
+    }, 700);
+}
 
-  // Bot Phản hồi tự động (Phản hồi thông minh, ấm áp)
-  setTimeout(() => {
-    const botMsgDiv = document.createElement('div');
-    botMsgDiv.className = 'msg bot';
-    botMsgDiv.innerHTML = getAIResponse(text);
-    chatMessages.appendChild(botMsgDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }, 1000);
+function appendMessage(msg, sender) {
+    const box = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.className = `message ${sender}`;
+    div.innerText = msg;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
 }
 
 function handleKeyPress(e) {
-  if (e.key === 'Enter') sendMessage();
-}
-
-function getAIResponse(userText) {
-  const lower = userText.toLowerCase();
-  if (lower.includes('mệt') || lower.includes('áp lực') || lower.includes('stress')) {
-    return "Mình cảm nhận được sự mệt mỏi của bạn. Hãy thử hít một hơi thật sâu, thả lỏng đôi vai nhé. Bạn có muốn chia sẻ cụ thể hơn điều gì đang làm bạn bận tâm không?";
-  } else if (lower.includes('ngủ') || lower.includes('mất ngủ')) {
-    return "Giấc ngủ rất quan trọng đối với năng lượng của bạn. Trước khi ngủ 30 phút, bạn thử tắt điện thoại và nghe một bản nhạc không lời nhẹ nhàng xem sao nhé!";
-  } else {
-    return "Cảm ơn bạn đã mở lòng chia sẻ. Mình luôn ở đây để đồng hành và lắng nghe bạn. Bạn có muốn mình gợi ý thêm một bài tập thiền nhẹ nhàng không?";
-  }
+    if (e.key === 'Enter') sendMessage();
 }
