@@ -59,14 +59,19 @@ let currentCategory = '';
 // Chuyển đổi linh hoạt giữa các màn hình
 function showSection(sectionId) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-    window.scrollTo(0, 0);
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 // Bắt đầu bài đánh giá
 function startAssessment(category) {
     currentCategory = category;
     const quiz = quizData[category];
+    if (!quiz) return;
+
     document.getElementById('quiz-title').innerText = quiz.title;
     
     const container = document.getElementById('questions-container');
@@ -96,19 +101,22 @@ function startAssessment(category) {
 // Nộp bài & Tính điểm
 function submitQuiz() {
     const quiz = quizData[currentCategory];
+    if (!quiz) return;
+
     let totalScore = 0;
     let isEmergency = false;
 
     for (let i = 0; i < quiz.questions.length; i++) {
         const selected = document.querySelector(`input[name="q_${i}"]:checked`);
         if (!selected) {
-            alert(`Bạn chưa hoàn thành câu hỏi số ${i + 1}. Vui lòng trả lời đủ nhé!`);
+            alert(`Bạn chưa hoàn thành câu hỏi số ${i + 1}. Vui lòng chọn đáp án trước khi nộp bài nhé!`);
             return;
         }
 
         const val = parseInt(selected.value);
         const questionObj = quiz.questions[i];
 
+        // Nếu là câu có yếu tố nguy hiểm và chọn từ tùy chọn thứ 2 trở đi (index > 0)
         if (questionObj.danger && val > 0) {
             isEmergency = true;
         }
@@ -128,7 +136,9 @@ function submitQuiz() {
 
 // Trả kết quả & Gợi ý bài tập
 function renderResults(score) {
-    document.getElementById('score-text').innerText = score;
+    const scoreElem = document.getElementById('score-text');
+    if (scoreElem) scoreElem.innerText = score;
+
     const badge = document.getElementById('level-badge');
     const analysis = document.getElementById('score-analysis');
     const exercises = document.getElementById('exercise-list');
@@ -138,23 +148,36 @@ function renderResults(score) {
 
     if (score <= 5) {
         levelText = "Bình Thường / Ổn Định Nội Tại";
-        badge.style.background = "#4bd3c4";
+        if (badge) badge.style.background = "#4bd3c4";
         analysisText = "Tâm trí bạn đang giữ được trạng thái cân bằng rất tốt. Hãy tiếp tục duy trì lối sống lành mạnh và nuôi dưỡng niềm vui mỗi ngày!";
-        listEx = ["🌿 Thực hành Thiền chánh niệm (Mindfulness) 5 phút mỗi sáng", "🏃 Bào chế Endorphin qua 20 phút vận động nhẹ nhẹ", "📖 Viết 3 điều biết ơn vào sổ tay trước khi đi ngủ"];
+        listEx = [
+            "🌿 Thực hành Thiền chánh niệm (Mindfulness) 5 phút mỗi sáng",
+            "🏃 Bào chế Endorphin qua 20 phút vận động nhẹ nhàng",
+            "📖 Viết 3 điều biết ơn vào sổ tay trước khi đi ngủ"
+        ];
     } else if (score <= 12) {
         levelText = "Căng Thẳng Vừa / Cần Nghỉ Ngơi";
-        badge.style.background = "#ffb703";
-        analysisText = "Bạn đang gánh chịu một số áp lực hoặc mệt mỏi tích tụ[cite: 4]. Đã đến lúc tạm gạt bỏ công việc để chăm sóc bản thân[cite: 4].";
-        listEx = ["🌬️ Bài tập hít thở vuông (Box Breathing): Hít 4s - Giữ 4s - Thở 4s - Nghỉ 4s", "🎧 Bật nhạc sóng não Alpha/Theta thư giãn sâu", "☕ Ngừng sử dụng thiết bị điện tử 45 phút trước khi đi ngủ[cite: 4]"];
+        if (badge) badge.style.background = "#ffb703";
+        analysisText = "Bạn đang gánh chịu một số áp lực hoặc mệt mỏi tích tụ. Đã đến lúc tạm gạt bỏ bớt công việc để chăm sóc lại bản thân.";
+        listEx = [
+            "🌬️ Bài tập hít thở vuông (Box Breathing): Hít 4s - Giữ 4s - Thở 4s - Nghỉ 4s",
+            "🎧 Bật nhạc sóng não Alpha/Theta thư giãn sâu",
+            "☕ Ngừng sử dụng thiết bị điện tử 45 phút trước khi đi ngủ"
+        ];
     } else {
         levelText = "Mức Độ Cao / Cần Hỗ Trợ Chuyên Môn";
-        badge.style.background = "#ff4d4f";
-        analysisText = "Sức khỏe tinh thần của bạn đang chịu tổn thương khá lớn[cite: 4]. Việc tìm kiếm sự trợ giúp từ chuyên gia hoặc tâm sự với người thân là điều vô cùng cần thiết[cite: 4].";
-        listEx = ["🧘 Thiền quét cơ thể (Body Scan Meditation) xoa dịu vùng cơ căng thẳng", "📝 Phương pháp Journaling - Viết ra toàn bộ luồng suy nghĩ rối bời", "🗣️ Mở lòng tâm sự với người đáng tin cậy hoặc hẹn lịch gặp bác sĩ tâm lý"];
+        if (badge) badge.style.background = "#ff4d4f";
+        analysisText = "Sức khỏe tinh thần của bạn đang chịu tổn thương khá lớn. Việc tìm kiếm sự trợ giúp từ chuyên gia hoặc tâm sự mở lòng với người thân là điều vô cùng cần thiết.";
+        listEx = [
+            "🧘 Thiền quét cơ thể (Body Scan Meditation) xoa dịu vùng cơ căng thẳng",
+            "📝 Phương pháp Journaling - Viết ra toàn bộ luồng suy nghĩ rối bời",
+            "🗣️ Mở lòng tâm sự với người đáng tin cậy hoặc hẹn lịch gặp bác sĩ tâm lý"
+        ];
     }
 
-    badge.innerText = levelText;
-    analysis.innerText = analysisText;
+    if (badge) badge.innerText = levelText;
+    if (analysis) analysis.innerText = analysisText;
+
     listEx.forEach(ex => {
         const li = document.createElement('li');
         li.innerText = ex;
@@ -165,16 +188,19 @@ function renderResults(score) {
 }
 
 // Từ khóa nguy hiểm kích hoạt Cảnh báo đỏ
-const dangerKeywords = ["tự sát", "tự tử", "muốn chết", "kết thúc cuộc đời", "reset cuộc đời", "chết đi", "tự làm tổn thương", "kết liễu"];
+const dangerKeywords = ["tự sát", "tự tử", "muốn chết", "kết thúc cuộc đời", "reset cuộc đời", "chết đi", "tự làm tổn thương", "kết liễu", "chán sống"];
 
 function triggerEmergency() {
-    document.getElementById('emergency-banner').classList.remove('hidden');
+    const banner = document.getElementById('emergency-banner');
+    if (banner) banner.classList.remove('hidden');
     showSection('home-section');
 }
 
 // Chatbot AI Tư Vấn
 function sendMessage() {
     const input = document.getElementById('chat-input');
+    if (!input) return;
+
     const text = input.value.trim();
     if (!text) return;
 
@@ -186,21 +212,21 @@ function sendMessage() {
     if (containsDanger) {
         triggerEmergency();
         appendMessage("⚠️ Hệ thống phát hiện tín hiệu nguy cơ cao. Chatbot đã ngưng để chuyển hướng bạn đến Banner cảnh báo đỏ phía trên!", 'bot');
-        document.getElementById('chat-input').disabled = true;
+        input.disabled = true;
         return;
     }
 
     // Trả lời dựa trên nguyên lý DSM-5-TR
     setTimeout(() => {
-        let reply = "Cảm ơn bạn đã tin tưởng chia sẻ. Theo các nghiên cứu tâm lý học chuẩn DSM-5-TR, cảm xúc của bạn hoàn toàn xứng đáng được lắng nghe và tôn trọng[cite: 5]. Bạn có muốn thử một bài tập hít thở ngắn cùng mình không?";
+        let reply = "Cảm ơn bạn đã tin tưởng chia sẻ. Theo các nghiên cứu tâm lý học chuẩn DSM-5-TR, cảm xúc của bạn hoàn toàn xứng đáng được lắng nghe và tôn trọng. Bạn có muốn thử một bài tập hít thở ngắn cùng mình không?";
         
         const lower = text.toLowerCase();
         if (lower.includes("lo") || lower.includes("sợ") || lower.includes("căng thẳng")) {
-            reply = "Sự lo âu lan tỏa là phản ứng tự nhiên khi hệ thần kinh bị quá tải[cite: 4]. Bạn hãy đặt tay lên ngực và hít một hơi thật sâu cùng mình nhé[cite: 4]!";
+            reply = "Sự lo âu lan tỏa là phản ứng tự nhiên khi hệ thần kinh bị quá tải. Bạn hãy đặt tay lên ngực và hít một hơi thật sâu cùng mình nhé!";
         } else if (lower.includes("ngủ") || lower.includes("mệt") || lower.includes("thức đêm")) {
-            reply = "Giấc ngủ ảnh hưởng trực tiếp đến khả năng chữa lành của bộ não[cite: 4]. Hãy thử thả lỏng vai và tắt bớt ánh sáng đèn xung quanh xem sao nhé[cite: 4].";
+            reply = "Giấc ngủ ảnh hưởng trực tiếp đến khả năng chữa lành của bộ não. Hãy thử thả lỏng vai và tắt bớt ánh sáng đèn xung quanh xem sao nhé.";
         } else if (lower.includes("buồn") || lower.includes("chán") || lower.includes("mất động lực")) {
-            reply = "Cảm giác trống rỗng hay buồn chán là lời nhắc nhở cơ thể cần được nghỉ ngơi[cite: 4]. Đừng quá khắt khe với bản thân hôm nay nhé[cite: 4]!";
+            reply = "Cảm giác trống rỗng hay buồn chán là lời nhắc nhở cơ thể cần được nghỉ ngơi. Đừng quá khắt khe với bản thân hôm nay nhé!";
         }
         
         appendMessage(reply, 'bot');
@@ -209,6 +235,8 @@ function sendMessage() {
 
 function appendMessage(msg, sender) {
     const box = document.getElementById('chat-messages');
+    if (!box) return;
+
     const div = document.createElement('div');
     div.className = `message ${sender}`;
     div.innerText = msg;
