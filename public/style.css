@@ -12,13 +12,24 @@
     --border-radius: 20px;
     --shadow-soft: 0 10px 30px rgba(123, 97, 255, 0.08);
     --shadow-hover: 0 15px 35px rgba(123, 97, 255, 0.18);
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-* {
+/* Tối ưu hiệu năng render cơ bản */
+*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-tap-highlight-color: transparent; /* Bỏ khung xanh nhấp nháy trên di động */
+}
+
+html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -26,6 +37,8 @@ body {
     color: var(--text-main);
     line-height: 1.6;
     padding-bottom: 60px;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* Navigation Bar */
@@ -39,6 +52,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+    backdrop-filter: blur(8px); /* Tạo hiệu ứng kính mờ mượt mà */
 }
 
 .logo {
@@ -46,6 +60,12 @@ body {
     font-weight: 900;
     color: var(--primary-color);
     cursor: pointer;
+    user-select: none;
+    transition: transform var(--transition-fast);
+}
+
+.logo:active {
+    transform: scale(0.96);
 }
 
 .nav-links {
@@ -62,12 +82,17 @@ body {
     border-radius: 14px;
     color: var(--text-main);
     cursor: pointer;
-    transition: all 0.3s ease;
+    touch-action: manipulation;
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
 
 .nav-links button:hover {
     background-color: var(--primary-light);
     color: var(--primary-color);
+}
+
+.nav-links button:active {
+    transform: scale(0.95);
 }
 
 .nav-links .chat-nav-btn {
@@ -93,12 +118,19 @@ body {
 
 .view-section.active {
     display: block;
-    animation: fadeInSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: fadeInSlide var(--transition-smooth) forwards;
+    will-change: transform, opacity; /* Tăng tốc GPU */
 }
 
 @keyframes fadeInSlide {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
+    0% { 
+        opacity: 0; 
+        transform: translateY(12px); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
 }
 
 /* Hero Banner */
@@ -123,6 +155,7 @@ body {
     font-weight: 900;
     color: #1a202c;
     margin-bottom: 10px;
+    letter-spacing: -0.5px;
 }
 
 .hero p {
@@ -143,23 +176,31 @@ body {
     padding: 30px 22px;
     text-align: center;
     box-shadow: var(--shadow-soft);
-    transition: all 0.3s ease;
-    cursor: pointer;
     border: 2px solid transparent;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    cursor: pointer;
+    touch-action: manipulation;
+    /* Tối ưu hiệu năng hover bằng transform GPU */
+    transition: transform var(--transition-smooth), border-color var(--transition-fast), box-shadow var(--transition-smooth);
+    will-change: transform;
 }
 
 .card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-6px);
     border-color: var(--primary-color);
     box-shadow: var(--shadow-hover);
+}
+
+.card:active {
+    transform: translateY(-2px);
 }
 
 .card-icon {
     font-size: 3.2rem;
     margin-bottom: 15px;
+    line-height: 1;
 }
 
 .card h2 {
@@ -183,7 +224,7 @@ body {
     border-radius: 12px;
     font-weight: 800;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .card:hover .card-btn {
@@ -197,6 +238,7 @@ body {
     padding: 40px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-soft);
+    contain: content; /* Giúp trình duyệt cô lập việc render bên trong container */
 }
 
 .quiz-header {
@@ -235,12 +277,13 @@ body {
     padding: 14px 20px;
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 12px;
     border: 1px solid #edf2f7;
     font-weight: 600;
+    touch-action: manipulation;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .option-label:hover {
@@ -252,9 +295,10 @@ body {
     accent-color: var(--primary-color);
     width: 18px;
     height: 18px;
+    cursor: pointer;
 }
 
-/* Submit & General Buttons */
+/* Buttons */
 .btn-submit, .btn-chat {
     background: var(--primary-color);
     color: white;
@@ -266,11 +310,16 @@ body {
     cursor: pointer;
     width: 100%;
     margin-top: 15px;
-    transition: background 0.3s;
+    touch-action: manipulation;
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .btn-submit:hover, .btn-chat:hover {
     background: var(--primary-hover);
+}
+
+.btn-submit:active, .btn-chat:active {
+    transform: scale(0.98);
 }
 
 .btn-secondary {
@@ -284,6 +333,8 @@ body {
     cursor: pointer;
     width: 100%;
     margin-top: 10px;
+    touch-action: manipulation;
+    transition: background-color var(--transition-fast);
 }
 
 .btn-secondary:hover {
@@ -353,7 +404,7 @@ body {
     font-weight: 600;
 }
 
-/* Chatbot UI */
+/* Chatbot UI Tối Ưu Mượt Mà */
 .chat-header {
     display: flex;
     align-items: center;
@@ -377,6 +428,7 @@ body {
 .chat-messages {
     height: 400px;
     overflow-y: auto;
+    overscroll-behavior: contain; /* Ngăn cuộn nhảy sang trang chính */
     border: 1px solid #edf2f7;
     background: #fafafa;
     padding: 20px;
@@ -385,6 +437,16 @@ body {
     display: flex;
     flex-direction: column;
     gap: 14px;
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar đẹp & nhẹ */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
 }
 
 .message {
@@ -393,6 +455,7 @@ body {
     border-radius: 18px;
     font-size: 0.98rem;
     line-height: 1.5;
+    word-break: break-word;
 }
 
 .message.bot {
@@ -422,6 +485,7 @@ body {
     border-radius: 14px;
     outline: none;
     font-size: 0.95rem;
+    transition: border-color var(--transition-fast);
 }
 
 .chat-input-box input:focus {
@@ -436,6 +500,8 @@ body {
     border-radius: 14px;
     font-weight: 800;
     cursor: pointer;
+    touch-action: manipulation;
+    transition: background-color var(--transition-fast);
 }
 
 /* Banner Cảnh Báo Nguy Cấp */
@@ -446,9 +512,10 @@ body {
     width: 100%;
     background-color: var(--danger-color);
     color: white;
-    padding: 22px;
+    padding: 18px 22px;
     z-index: 1000;
     box-shadow: 0 5px 25px rgba(255, 77, 79, 0.4);
+    will-change: transform;
 }
 
 .banner-content {
@@ -459,10 +526,10 @@ body {
     gap: 20px;
 }
 
-.warning-icon { font-size: 3rem; }
+.warning-icon { font-size: 2.8rem; }
 
 .hotline-links {
-    margin-top: 12px;
+    margin-top: 10px;
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
@@ -472,9 +539,39 @@ body {
     background: white;
     color: var(--danger-color);
     text-decoration: none;
-    padding: 9px 18px;
+    padding: 8px 16px;
     border-radius: 10px;
     font-weight: 900;
+    transition: transform var(--transition-fast);
+}
+
+.hotline-btn:active {
+    transform: scale(0.95);
 }
 
 .hidden { display: none !important; }
+
+/* Responsive Tối Ưu Thiết Bị Di Động */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 14px 20px;
+    }
+    .logo {
+        font-size: 1.5rem;
+    }
+    .nav-links button {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    .quiz-container, .result-container, .chat-container {
+        padding: 22px 18px;
+    }
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+}
