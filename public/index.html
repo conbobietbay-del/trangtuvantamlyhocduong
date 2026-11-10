@@ -1,160 +1,39 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoulCare - Góc Tâm Lý & Chăm Sóc Sức Khỏe Tinh Thần</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173c35">
+  <title>Âm Sắc An Nam</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Banner Cảnh Báo Nguy Cấp (Hiện ra khi phát hiện từ nguy hiểm / C-SSRS) -->
-    <div id="emergency-banner" class="emergency-banner hidden">
-        <div class="banner-content">
-            <span class="warning-icon">🚨</span>
-            <div class="warning-text">
-                <h3>CẢNH BÁO NGUY CƠ NGUY HIỂM / KHẨN CẤP</h3>
-                <p>Bạn không cần phải tự mình vượt qua chuyện này[cite: 4]. Các phản hồi cho thấy bạn đang gặp tổn thương sâu sắc và cần được lắng nghe khẩn cấp[cite: 4]. Đừng ngần ngại liên hệ sự trợ giúp ngay lập tức!</p>
-                <div class="hotline-links">
-                    <a href="tel:115" class="hotline-btn">🚑 Cấp cứu: 115</a>
-                    <a href="tel:111" class="hotline-btn">👶 Tổng đài Bảo vệ Trẻ em: 111</a>
-                    <a href="tel:1900599930" class="hotline-btn">📞 Tư vấn Tâm lý Ngày & Đêm: 1900 599930</a>
-                </div>
-            </div>
-        </div>
-    </div>
+  <main id="app">
+    <section id="intro" class="intro">
+      <div class="cloud cloud-left"></div>
+      <div class="cloud cloud-right"></div>
+      <div class="cover">
+        <img src="assets/pages/cover.jpg" alt="Bìa sách Âm Sắc An Nam">
+      </div>
+      <button id="startBtn">Bắt đầu</button>
+    </section>
 
-    <!-- Thanh Điều Hướng Navigation -->
-    <nav class="navbar">
-        <div class="logo" onclick="showSection('home-section')">🌱 SoulCare</div>
-        <div class="nav-links">
-            <button onclick="showSection('home-section')">🏠 Trang Chủ</button>
-            <button onclick="startAssessment('hoc-tap')">🎓 Học Tập</button>
-            <button onclick="startAssessment('giac-ngu')">🌙 Giấc Ngủ</button>
-            <button onclick="startAssessment('lo-au')">🌧️ Lo Âu</button>
-            <button onclick="startAssessment('tam-trang')">☀️ Tâm Trạng</button>
-            <button onclick="showSection('chatbot-section')" class="chat-nav-btn">🤖 Chatbot AI</button>
-        </div>
-    </nav>
+    <section id="reader" class="reader hidden">
+      <div id="book" class="book"></div>
+      <nav class="controls">
+        <button id="prevBtn">❮</button>
+        <span id="pageNumber">1 / 1</span>
+        <button id="nextBtn">❯</button>
+        <button id="homeBtn">Về bìa</button>
+        <button id="musicBtn">♫</button>
+        <button id="tocBtn">Mục lục</button>
+      </nav>
+    </section>
+  </main>
 
-    <div class="container">
-        <!-- 1. Màn Hình Chính: 4 Mục Độc Lập -->
-        <section id="home-section" class="view-section active">
-            <div class="hero">
-                <span class="hero-badge">✨ Không Gian Lắng Nghe & Chữa Lành</span>
-                <h1>Chăm Sóc Sức Khỏe Tinh Thần</h1>
-                <p>Bài đánh giá chuẩn khoa học giúp bạn thấu hiểu bản thân, giải tỏa gánh nặng và tìm lại bình yên nội tại[cite: 4].</p>
-            </div>
-            
-            <div class="grid-cards">
-                <div class="card" onclick="startAssessment('hoc-tap')">
-                    <div class="card-icon">📚</div>
-                    <h2>Học Tập & Công Việc</h2>
-                    <p>Đánh giá mức độ kiệt sức (Burnout), áp lực thi cử và suy giảm động lực (Thang đo MBI & PSS-10)[cite: 4].</p>
-                    <button class="card-btn">Bắt đầu đánh giá ➔</button>
-                </div>
+  <audio id="backgroundMusic" loop src="assets/audio/nhac-nen.mp3"></audio>
+  <audio id="pageSound" src="assets/audio/lat-giay.mp3"></audio>
 
-                <div class="card" onclick="startAssessment('giac-ngu')">
-                    <div class="card-icon">🌙</div>
-                    <h2>Giấc Ngủ & Thư Giãn</h2>
-                    <p>Khảo sát chuyên sâu chất lượng giấc ngủ, trằn trọc và rối loạn nhịp sinh học (Thang đo PSQI / ISI)[cite: 4].</p>
-                    <button class="card-btn">Bắt đầu đánh giá ➔</button>
-                </div>
-
-                <div class="card" onclick="startAssessment('lo-au')">
-                    <div class="card-icon">🌧️</div>
-                    <h2>Lo Âu & Căng Thẳng</h2>
-                    <p>Sàng lọc tình trạng bất an, suy nghĩ dồn dập và rối loạn lo âu lan tỏa (Thang đo GAD-7 chuẩn hóa)[cite: 4].</p>
-                    <button class="card-btn">Bắt đầu đánh giá ➔</button>
-                </div>
-
-                <div class="card" onclick="startAssessment('tam-trang')">
-                    <div class="card-icon">☀️</div>
-                    <h2>Tâm Trạng & Cảm Xúc</h2>
-                    <p>Nhận diện triệu chứng trầm cảm, trống rỗng và tổn thương tinh thần (Thang đo PHQ-9 & C-SSRS)[cite: 4].</p>
-                    <button class="card-btn">Bắt đầu đánh giá ➔</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. Màn Hình Bộ Câu Hỏi Đánh Giá -->
-        <section id="quiz-section" class="view-section">
-            <div class="quiz-container">
-                <div class="quiz-header">
-                    <h2 id="quiz-title">Tiêu đề bài kiểm tra</h2>
-                    <p class="quiz-subtitle">Hãy chọn đáp án đúng nhất với trải nghiệm của bạn trong 2 tuần gần đây.</p>
-                </div>
-                <form id="quiz-form">
-                    <div id="questions-container"></div>
-                    <button type="button" class="btn-submit" onclick="submitQuiz()">Nộp Bài & Phân Tích Kết Quả</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- 3. Màn Hình Kết Quả & Gợi Ý Chữa Lành -->
-        <section id="result-section" class="view-section">
-            <div class="result-container">
-                <h2>Kết Quả Phân Tích Tâm Lý</h2>
-                
-                <div class="score-card">
-                    <div class="score-circle">
-                        <span id="score-text">0</span>
-                        <small>Điểm</small>
-                    </div>
-                    <div id="level-badge" class="badge">Mức độ</div>
-                </div>
-
-                <div class="analysis-box">
-                    <h3>📝 Nhận Xét & Phân Tích Chuyên Môn</h3>
-                    <p id="score-analysis">Đang tải kết quả...</p>
-                </div>
-
-                <div class="recommendations-box">
-                    <h3>🧘 Gợi Ý Bài Tập Thiền & Hoạt Động Chữa Lành</h3>
-                    <ul id="exercise-list"></ul>
-                </div>
-
-                <div class="clinics-box">
-                    <h3>🏥 Địa Chỉ Hỗ Trợ & Phòng Tư Vấn Tâm Lý Trực Tiếp</h3>
-                    <div class="clinic-list">
-                        <div class="clinic-item">
-                            <strong>🏥 Viện Sức Khỏe Tâm Thần & Các Bệnh Viện Đa Khoa Uy Tín</strong>
-                            <p>📍 Hãy tới cơ sở y tế gần nhất hoặc gặp cố vấn tâm lý trường học / cơ quan[cite: 4].</p>
-                            <p>📞 Tổng đài Quốc gia Tư vấn Tâm lý: <strong>1900 599930</strong> (Hỗ trợ 24/7)[cite: 4]</p>
-                            <p>👶 Tổng đài Quốc gia Bảo vệ Trẻ em & Thanh thiếu niên: <strong>111</strong>[cite: 4]</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn-secondary" onclick="showSection('home-section')">🔄 Làm Bài Đánh Giá Khác</button>
-                    <button class="btn-chat" onclick="showSection('chatbot-section')">🤖 Trò Chuyện Ngay Với Chatbot AI SoulBot</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. Màn Hình Chatbot AI Tư Vấn -->
-        <section id="chatbot-section" class="view-section">
-            <div class="chat-container">
-                <div class="chat-header">
-                    <div class="bot-avatar">🤖</div>
-                    <div>
-                        <h3>SoulBot - Chuyên Gia Lắng Nghe & Đồng Hành</h3>
-                        <p>Ứng dụng tri thức chuẩn y khoa từ tài liệu DSM-5-TR chuyên sâu[cite: 5].</p>
-                    </div>
-                </div>
-                <div id="chat-messages" class="chat-messages">
-                    <div class="message bot">Xin chào bạn! Mình là SoulBot. Hôm nay bạn đang cảm thấy thế nào? Hãy chia sẻ với mình nhé, mình luôn ở đây để lắng nghe bạn! 😊✨</div>
-                </div>
-                <div class="chat-input-box">
-                    <input type="text" id="chat-input" placeholder="Nhập tâm tư hoặc câu hỏi của bạn..." onkeypress="handleKeyPress(event)">
-                    <button onclick="sendMessage()">Gửi ➔</button>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Nhúng Tệp JS Điều Khiển -->
-    <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
-</html>
+</html
