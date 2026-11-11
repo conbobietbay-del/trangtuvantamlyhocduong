@@ -2,7 +2,7 @@
  * ÂM SẮC AN NAM
  * CÁCH CHÈN ẢNH/ÂM THANH:
  * 1) Tạo thư mục assets cạnh 3 file này.
- * 2) Đặt ảnh bìa và ảnh trang vào assets/.
+ * 2) Đặt ảnh bìa và 10 ảnh trang (trang-01.jpg đến trang-10.jpg) vào assets/.
  * 3) Sửa COVER_IMAGE, pages[].image, pages[].audio và BACKGROUND_MUSIC bên dưới.
  * 4) Trang không có nhạc cụ thì bỏ audio hoặc để audio: "".
  */
@@ -28,9 +28,14 @@ const pages = [
     image: "assets/trang-03.jpg",
     instrument: "Đàn bầu",
     audio: "assets/dan-bau.mp3"
-  }
-  // Thêm trang theo mẫu trên. Ví dụ:
-  // { title: "Sáo trúc", image: "assets/trang-04.jpg", instrument: "Sáo trúc", audio: "assets/sao-truc.mp3" }
+  },
+  { title: "Trang 04", image: "assets/trang-04.jpg" },
+  { title: "Trang 05", image: "assets/trang-05.jpg" },
+  { title: "Trang 06", image: "assets/trang-06.jpg" },
+  { title: "Trang 07", image: "assets/trang-07.jpg" },
+  { title: "Trang 08", image: "assets/trang-08.jpg" },
+  { title: "Trang 09", image: "assets/trang-09.jpg" },
+  { title: "Trang 10", image: "assets/trang-10.jpg" }
 ];
 
 const $ = (id) => document.getElementById(id);
@@ -130,7 +135,7 @@ function setPageVisual(img, fallback, page) {
   img.onerror = () => {
     img.style.display = "none";
     fallback.classList.add("active");
-    fallback.innerHTML = `<h2>${escapeHTML(page.title || "Trang sách")}</h2><p>${escapeHTML(page.text || "Hãy kiểm tra lại đường dẫn hình ảnh trong app.js.")}</p>`;
+    fallback.innerHTML = <h2>${escapeHTML(page.title || "Trang sách")}</h2><p>${escapeHTML(page.text || "Hãy kiểm tra lại đường dẫn hình ảnh trong app.js.")}</p>;
   };
 }
 
@@ -153,7 +158,7 @@ function updateInstrumentControl() {
   if (page && page.audio) {
     instrumentControl.classList.remove("hidden");
     instrumentAudio.src = page.audio;
-    instrumentPlay.querySelector(".sound-label").textContent = `Nghe ${page.instrument || "nhạc cụ"}`;
+    instrumentPlay.querySelector(".sound-label").textContent = Nghe ${page.instrument || "nhạc cụ"};
   } else {
     instrumentControl.classList.add("hidden");
     instrumentAudio.removeAttribute("src");
@@ -281,7 +286,7 @@ $("tocButton").addEventListener("click", () => {
   pages.forEach((page, index) => {
     const button = document.createElement("button");
     button.className = "toc-item";
-    button.textContent = `${String(index + 1).padStart(2, "0")} · ${page.title || `Trang ${index + 1}`}`;
+    button.textContent = ${String(index + 1).padStart(2, "0")} · ${page.title || Trang ${index + 1}`}`;
     button.addEventListener("click", () => {
       stopInstrument();
       currentPage = index;
@@ -311,4 +316,3 @@ document.addEventListener("keydown", (event) => {
 });
 
 updateReader();
-   
