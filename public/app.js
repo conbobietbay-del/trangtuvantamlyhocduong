@@ -7,7 +7,7 @@
  * 4) Trang không có nhạc cụ thì bỏ audio hoặc để audio: "".
  */
 
-const COVER_IMAGE = "assets/bia-sach.jpg";
+const COVER_IMAGE = assets/bia-sach.jpg;
 const BACKGROUND_MUSIC = "assets/nhac-nen.mp3";
 const PAGE_TURN_SOUND = true; // Âm lật giấy được tạo bằng Web Audio, không cần file riêng.
 
