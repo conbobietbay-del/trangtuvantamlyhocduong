@@ -27,7 +27,7 @@ button { font: inherit; cursor: pointer; }
 }
 .intro.leaving { opacity: 0; visibility: hidden; pointer-events: none; }
 .cover-wrap {
-  width: min(64vw, 390px); height: min(68vh, 560px); min-height: 320px;
+  width: min(82vw, 760px); height: auto; aspect-ratio: 297 / 210; min-height: 0;
   position: relative; overflow: hidden; border-radius: 4px; box-shadow: var(--shadow);
   background: #d9c7a9;
 }
@@ -76,8 +76,8 @@ button { font: inherit; cursor: pointer; }
 .icon-button:hover { background: #e8d9c2; transform: translateY(-2px); }
 .book-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; gap: clamp(6px, 2vw, 28px); }
 .book {
-  position: relative; width: min(76vw, 620px); height: min(76vh, 780px);
-  min-height: 280px; background: var(--paper); box-shadow: var(--shadow); perspective: 1800px;
+  position: relative; width: min(86vw, 1100px, calc(70vh * 297 / 210)); height: auto; aspect-ratio: 297 / 210;
+  min-height: 0; background: var(--paper); box-shadow: var(--shadow); perspective: 1800px;
   overflow: hidden; border-radius: 3px;
 }
 .page { position: absolute; inset: 0; overflow: hidden; background: var(--paper); }
@@ -137,7 +137,7 @@ button { font: inherit; cursor: pointer; }
   .reader { padding: 10px 9px 14px; }
   .brand { font-size: 16px; }
   .icon-button { width: 36px; height: 36px; }
-  .book { width: min(82vw, 520px); height: min(72vh, 700px); }
+  .book { width: min(82vw, calc(66vh * 297 / 210)); height: auto; aspect-ratio: 297 / 210; }
   .nav-arrow { width: 28px; height: 48px; font-size: 30px; }
   .book-stage { gap: 4px; }
   .reader-footer { padding-top: 8px; }
@@ -146,4 +146,12 @@ button { font: inherit; cursor: pointer; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* A4 nằm ngang: giữ đúng tỉ lệ 297:210 trên mọi kích thước màn hình. */
+@media (max-height: 520px) {
+  .reader { padding-top: 6px; padding-bottom: 6px; }
+  .book { width: min(78vw, calc(68vh * 297 / 210)); }
+  .reader-header .brand { font-size: 16px; }
+  .reader-footer { padding-top: 4px; }
 }
