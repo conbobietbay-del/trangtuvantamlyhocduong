@@ -20,7 +20,7 @@ const POS = {                                        // chỉnh riêng từng tr
   14: { x: 20, y: 40 },   // đàn nhị  — nút bên trái
   18: { x: 20, y: 40 },   // trống đồng
   22: { x: 20, y: 40 },   // đàn tranh
-  28: { x: 20, y: 50 },   // đàn đáy
+  28: { x: 20, y: 70 },   // đàn đáy
 };
 
 const TOTAL = SECTIONS.reduce((s, x) => s + x[1], 0);
