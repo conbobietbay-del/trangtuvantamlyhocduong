@@ -1,19 +1,28 @@
 /* ===== CẤU HÌNH — chỉnh ở đây ===== */
-const TOTAL = 27;
 const EXT = 'png';                                   // đuôi ảnh: png / jpg / webp
-const imgSrc = n => `images/trang-${String(n).padStart(2, '0')}.${EXT}`; // images/trang-01.png ... trang-27.png
+const imgSrc = n => `images/trang-${String(n).padStart(2, '0')}.${EXT}`; // images/trang-01.png ... trang-36.png
 
-// Mục lục: [tên, số trang]. Tổng = 27 (1+4+4+4+4+4+6)
-const SECTIONS = [['Bìa sách', 1], ['Mở đầu', 4], ['Đàn bầu', 4], ["Đàn t'rưng", 4], ['Đàn nhị', 4], ['Trống đồng', 4], ['Đàn tranh', 6]];
+// Các mục theo ĐÚNG THỨ TỰ trong sách: [tên mục, số trang, tên file âm thanh (chỉ với nhạc cụ)]
+// Số trang tự cộng dồn. Nút loa tự đặt ở trang đầu của mỗi nhạc cụ, file: audio/<tên>.mp3
+const SECTIONS = [
+  ['Bìa sách', 1],
+  ['Mở đầu', 4],
+  ['Đàn bầu', 4, 'dan-bau'],
+  ["Đàn t'rưng", 4, 'dan-trung'],
+  ['Đàn nhị', 4, 'dan-nhi'],
+  ['Trống đồng', 4, 'trong-dong'],
+  ['Đàn tranh', 6, 'dan-tranh'],
+  ['Đàn đáy', 5, 'dan-day'],
+  ['Trống cơm', 4, 'trong-com'],
+];
+const BTN_POS = { x: 80, y: 40 };                    // vị trí nút loa (% trên trang)
+const POS = {};                                      // chỉnh riêng từng trang, ví dụ: POS[6] = { x: 70, y: 30 };
 
-// Nút phát âm thanh: { số trang: { src, x, y } } — x, y là % vị trí trên trang (gần hình nhạc cụ)
-const SOUNDS = {
-  6:  { src: 'audio/dan-bau.mp3',   x: 80, y: 40 },
-  10: { src: 'audio/dan-trung.mp3', x: 80, y: 40 },
-  14: { src: 'audio/dan-nhi.mp3',   x: 80, y: 40 },
-  18: { src: 'audio/trong-dong.mp3', x: 80, y: 40 },
-  22: { src: 'audio/dan-tranh.mp3', x: 80, y: 40 },
-};
+const TOTAL = SECTIONS.reduce((s, x) => s + x[1], 0);
+const SOUNDS = {};
+let _p = 1;
+SECTIONS.forEach(([, n, f]) => { if (f) SOUNDS[_p] = { src: `audio/${f}.mp3`, ...BTN_POS, ...POS[_p] }; _p += n; });
+
 const BG_VOL = 0.45, DUCK_VOL = 0.1;                 // âm lượng nhạc nền: bình thường / khi phát nhạc cụ
 /* ================================== */
 
