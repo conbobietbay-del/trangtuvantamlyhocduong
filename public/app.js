@@ -8,11 +8,11 @@ const SECTIONS = [['Bìa sách', 1], ['Mở đầu', 4], ['Đàn bầu', 4], ["�
 
 // Nút phát âm thanh: { số trang: { src, x, y } } — x, y là % vị trí trên trang (gần hình nhạc cụ)
 const SOUNDS = {
-  6:  { src: 'audio/dan-bau.mp3',   x: 82, y: 72 },
-  10: { src: 'audio/dan-trung.mp3', x: 82, y: 72 },
-  14: { src: 'audio/dan-nhi.mp3',   x: 82, y: 72 },
-  18: { src: 'audio/trong-dong.mp3', x: 82, y: 72 },
-  22: { src: 'audio/dan-tranh.mp3', x: 82, y: 72 },
+  6:  { src: 'audio/dan-bau.mp3',   x: 80, y: 40 },
+  10: { src: 'audio/dan-trung.mp3', x: 80, y: 40 },
+  14: { src: 'audio/dan-nhi.mp3',   x: 80, y: 40 },
+  18: { src: 'audio/trong-dong.mp3', x: 80, y: 40 },
+  22: { src: 'audio/dan-tranh.mp3', x: 80, y: 40 },
 };
 const BG_VOL = 0.45, DUCK_VOL = 0.1;                 // âm lượng nhạc nền: bình thường / khi phát nhạc cụ
 /* ================================== */
