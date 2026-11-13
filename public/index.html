@@ -1,81 +1,42 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f6efe3" />
-  <title>Âm Sắc An Nam</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Âm Sắc An Nam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app">
-    <!-- Màn hình mở đầu: thay ảnh bìa trong app.js -->
-    <section class="intro" id="intro" aria-label="Bìa sách Âm Sắc An Nam">
-      <div class="cloud cloud-left"></div>
-      <div class="cloud cloud-right"></div>
-      <div class="cover-wrap">
-        <img id="coverImage" class="cover-image" alt="Bìa sách Âm Sắc An Nam" />
-        <div class="cover-fallback" id="coverFallback">
-          <span class="eyebrow">SÁCH TƯƠNG TÁC</span>
-          <h1>ÂM SẮC<br />AN NAM</h1>
-          <p>Khám phá thanh âm nhạc cụ truyền thống Việt Nam</p>
-        </div>
-      </div>
-      <button class="start-button" id="startButton">Bắt đầu <span>→</span></button>
-    </section>
 
-    <section class="reader hidden" id="reader" aria-label="Sách tương tác">
-      <header class="reader-header">
-        <div class="brand">ÂM SẮC AN NAM</div>
-        <div class="header-actions">
-          <button class="icon-button" id="tocButton" title="Mục lục" aria-label="Mục lục">☷</button>
-          <button class="icon-button" id="musicToggle" title="Bật/tắt nhạc nền" aria-label="Bật/tắt nhạc nền">♫</button>
-          <button class="icon-button" id="backCoverButton" title="Về bìa sách" aria-label="Về bìa sách">⌂</button>
-        </div>
-      </header>
+<main id="stage"><div id="book"></div></main>
 
-      <div class="book-stage">
-        <button class="nav-arrow prev" id="prevButton" aria-label="Trang trước">‹</button>
-        <div class="book" id="book">
-          <div class="page" id="pageCurrent">
-            <img class="page-image" id="currentImage" alt="Trang sách hiện tại" />
-            <div class="page-fallback" id="currentFallback"></div>
-            <div class="instrument-control hidden" id="instrumentControl">
-              <button class="sound-button" id="instrumentPlay" aria-label="Phát âm thanh nhạc cụ">
-                <span class="speaker">♫</span><span class="sound-label">Nghe âm thanh</span>
-                <span class="sound-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-              </button>
-            </div>
-          </div>
-          <div class="page page-next" id="pageNext">
-            <img class="page-image" id="nextImage" alt="Trang sách kế tiếp" />
-            <div class="page-fallback" id="nextFallback"></div>
-          </div>
-          <div class="flip-overlay" id="flipOverlay"></div>
-        </div>
-        <button class="nav-arrow next" id="nextButton" aria-label="Trang sau">›</button>
-      </div>
+<!-- Màn hình mở đầu: mây che bìa -->
+<div id="intro">
+  <div class="cloud l"></div>
+  <div class="cloud r"></div>
+  <button id="start" class="start" hidden>Bắt đầu</button>
+</div>
 
-      <footer class="reader-footer">
-        <button class="text-button" id="prevTextButton">← Trước</button>
-        <div class="page-count"><span id="pageNumber">1</span><span class="count-divider">/</span><span id="totalPages">1</span></div>
-        <button class="text-button" id="nextTextButton">Tiếp →</button>
-      </footer>
-    </section>
+<!-- Thanh công cụ -->
+<nav id="bar" aria-label="Điều khiển sách">
+  <button id="home" title="Về bìa sách" aria-label="Về bìa sách">⌂</button>
+  <button id="tocBtn" title="Mục lục" aria-label="Mục lục">☰</button>
+  <button id="prev" title="Trang trước" aria-label="Trang trước">‹</button>
+  <span id="count">1 / 27</span>
+  <button id="next" title="Trang sau" aria-label="Trang sau">›</button>
+  <button id="music" title="Bật/tắt nhạc nền" aria-label="Bật/tắt nhạc nền">♪</button>
+  <button id="full" title="Toàn màn hình" aria-label="Toàn màn hình">⛶</button>
+</nav>
 
-    <aside class="toc-panel hidden" id="tocPanel">
-      <div class="toc-heading">
-        <h2>Mục lục</h2>
-        <button class="icon-button" id="closeTocButton" aria-label="Đóng mục lục">×</button>
-      </div>
-      <div id="tocList" class="toc-list"></div>
-    </aside>
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  </main>
+<aside id="toc" hidden><ul></ul></aside>
 
-  <!-- Nhạc nền: thay đường dẫn file trong app.js -->
-  <audio id="backgroundMusic" loop preload="none"></audio>
-  <audio id="instrumentAudio" preload="none"></audio>
-  <script src="app.js"></script>
+<audio id="bgm" src="audio/nhac-nen.mp3" loop preload="auto"></audio>
+<audio id="flip" src="audio/lat-trang.mp3" preload="auto"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
