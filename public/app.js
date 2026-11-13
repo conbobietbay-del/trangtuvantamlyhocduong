@@ -1,318 +1,153 @@
-/*
- * ÂM SẮC AN NAM
- * CÁCH CHÈN ẢNH/ÂM THANH:
- * 1) Tạo thư mục assets cạnh 3 file này.
- * 2) Đặt ảnh bìa và 10 ảnh trang (trang-01.jpg đến trang-10.jpg) vào assets/.
- * 3) Sửa COVER_IMAGE, pages[].image, pages[].audio và BACKGROUND_MUSIC bên dưới.
- * 4) Trang không có nhạc cụ thì bỏ audio hoặc để audio: "".
- */
+/* ===== CẤU HÌNH — chỉnh ở đây ===== */
+const TOTAL = 27;
+const EXT = 'png';                                   // đuôi ảnh: png / jpg / webp
+const imgSrc = n => `images/trang-${String(n).padStart(2, '0')}.${EXT}`; // images/trang-01.png ... trang-27.png
 
-const COVER_IMAGE = "assets/bia-sach.jpg";
-const BACKGROUND_MUSIC = "assets/nhac-nen.mp3";
-const PAGE_TURN_SOUND = true; // Âm lật giấy được tạo bằng Web Audio, không cần file riêng.
+// Mục lục: [tên, số trang]. Tổng = 27 (1+4+4+4+4+4+6)
+const SECTIONS = [['Bìa sách', 1], ['Mở đầu', 4], ['Đàn bầu', 4], ["Đàn t'rưng", 4], ['Đàn nhị', 4], ['Trống đồng', 4], ['Đàn tranh', 6]];
 
-const pages = [
-  {
-    title: "Lời mở đầu",
-    image: "assets/trang-01.jpg",
-    text: "Chào mừng bạn đến với Âm Sắc An Nam."
-  },
-  {
-    title: "Đàn tranh",
-    image: "assets/trang-02.jpg",
-    instrument: "Đàn tranh",
-    audio: "assets/dan-tranh.mp3"
-  },
-  {
-    title: "Đàn bầu",
-    image: "assets/trang-03.jpg",
-    instrument: "Đàn bầu",
-    audio: "assets/dan-bau.mp3"
-  },
-  { title: "Trang 04", image: "assets/trang-04.jpg" },
-  { title: "Trang 05", image: "assets/trang-05.jpg" },
-  { title: "Trang 06", image: "assets/trang-06.jpg" },
-  { title: "Trang 07", image: "assets/trang-07.jpg" },
-  { title: "Trang 08", image: "assets/trang-08.jpg" },
-  { title: "Trang 09", image: "assets/trang-09.jpg" },
-  { title: "Trang 10", image: "assets/trang-10.jpg" }
-];
+// Nút phát âm thanh: { số trang: { src, x, y } } — x, y là % vị trí trên trang (gần hình nhạc cụ)
+const SOUNDS = {
+  6:  { src: 'audio/dan-bau.mp3',   x: 82, y: 72 },
+  10: { src: 'audio/dan-trung.mp3', x: 82, y: 72 },
+  14: { src: 'audio/dan-nhi.mp3',   x: 82, y: 72 },
+  18: { src: 'audio/trong-dong.mp3', x: 82, y: 72 },
+  22: { src: 'audio/dan-tranh.mp3', x: 82, y: 72 },
+};
+const BG_VOL = 0.45, DUCK_VOL = 0.1;                 // âm lượng nhạc nền: bình thường / khi phát nhạc cụ
+/* ================================== */
 
-const $ = (id) => document.getElementById(id);
-const intro = $("intro");
-const reader = $("reader");
-const coverImage = $("coverImage");
-const coverFallback = $("coverFallback");
-const currentImage = $("currentImage");
-const nextImage = $("nextImage");
-const currentFallback = $("currentFallback");
-const nextFallback = $("nextFallback");
-const pageNext = $("pageNext");
-const instrumentControl = $("instrumentControl");
-const instrumentAudio = $("instrumentAudio");
-const backgroundMusic = $("backgroundMusic");
-const instrumentPlay = $("instrumentPlay");
-const pageNumber = $("pageNumber");
-const totalPages = $("totalPages");
-const prevButton = $("prevButton");
-const nextButton = $("nextButton");
-const toast = $("toast");
+const $ = s => document.querySelector(s);
+const bgm = $('#bgm'), flipSnd = $('#flip');
+let pf, cur = 0, started = false, inst = null, instBtn = null, fv;
+bgm.volume = BG_VOL;
 
-let currentPage = 0;
-let isAnimating = false;
-let musicEnabled = false;
-let audioContext;
-let toastTimer;
-let touchStartX = 0;
-
-coverImage.src = COVER_IMAGE;
-coverImage.addEventListener("error", () => {
-  coverImage.style.display = "none";
-  coverFallback.style.display = "flex";
-});
-coverFallback.style.display = "none";
-
-backgroundMusic.src = BACKGROUND_MUSIC;
-backgroundMusic.volume = 0.24;
-backgroundMusic.addEventListener("error", () => {
-  // Không làm gián đoạn trải nghiệm nếu chưa thêm file nhạc nền.
-});
-
-totalPages.textContent = pages.length;
-intro.classList.add("reveal");
-
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+/* --- Âm thanh --- */
+function fade(to) {
+  clearInterval(fv);
+  fv = setInterval(() => {
+    const d = to - bgm.volume;
+    if (Math.abs(d) < 0.02) { bgm.volume = to; clearInterval(fv); } else bgm.volume += d * 0.2;
+  }, 40);
+}
+function stopInst() {
+  const a = inst, b = instBtn;
+  inst = instBtn = null;
+  if (a) { a.onpause = a.onended = null; a.pause(); }
+  if (b) b.classList.remove('on');
+  fade(BG_VOL);
+}
+function toggleInst(src, btn) {
+  if (inst && instBtn === btn) { inst.paused ? inst.play() : inst.pause(); return; } // tạm dừng / phát lại
+  stopInst();
+  const a = inst = new Audio(src); instBtn = btn;
+  const sync = () => { const on = !a.paused; btn.classList.toggle('on', on); fade(on ? DUCK_VOL : BG_VOL); };
+  a.onplay = sync; a.onpause = sync; a.onended = stopInst;
+  a.play().catch(stopInst);
+}
+function sfx() {
+  const a = flipSnd.cloneNode(); a.volume = 0.7; a.play().catch(() => {});
 }
 
-function playPageTurn() {
-  if (!PAGE_TURN_SOUND) return;
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    audioContext ||= new AudioCtx();
-    if (audioContext.state === "suspended") audioContext.resume();
-    const duration = 0.16;
-    const bufferSize = Math.floor(audioContext.sampleRate * duration);
-    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      const fade = 1 - i / bufferSize;
-      data[i] = (Math.random() * 2 - 1) * fade * 0.16;
+/* --- Dựng sách --- */
+function build(startPage = 0) {
+  if (pf) pf.destroy();
+  const stage = $('#stage');
+  stage.innerHTML = '<div id="book"></div>';
+  const book = $('#book');
+  const w = Math.min(innerWidth * 0.96, (innerHeight - 90) * 1.4142);   // A4 ngang: 297 x 210
+  book.style.width = w + 'px';
+  book.style.height = w / 1.4142 + 'px';
+
+  for (let n = 1; n <= TOTAL; n++) {
+    const p = document.createElement('div');
+    p.className = 'page';
+    if (n === 1 || n === TOTAL) p.dataset.density = 'hard';
+    p.innerHTML = `<img src="${imgSrc(n)}" alt="Trang ${n}" draggable="false" decoding="async">`;
+    const s = SOUNDS[n];
+    if (s) {
+      const b = document.createElement('button');
+      b.className = 'snd'; b.style.left = s.x + '%'; b.style.top = s.y + '%';
+      b.setAttribute('aria-label', 'Nghe âm thanh nhạc cụ');
+      b.innerHTML = '<em>🔊</em><u><i></i><i></i><i></i></u>';
+      ['mousedown', 'touchstart', 'pointerdown'].forEach(t => b.addEventListener(t, e => e.stopPropagation(), { passive: true }));
+      b.addEventListener('click', e => { e.stopPropagation(); toggleInst(s.src, b); });
+      p.append(b);
     }
-    const source = audioContext.createBufferSource();
-    const filter = audioContext.createBiquadFilter();
-    const gain = audioContext.createGain();
-    source.buffer = buffer;
-    filter.type = "lowpass";
-    filter.frequency.value = 1800;
-    gain.gain.value = 0.22;
-    source.connect(filter);
-    filter.connect(gain);
-    gain.connect(audioContext.destination);
-    source.start();
-  } catch (error) {
-    console.warn("Không thể phát âm thanh lật trang:", error);
-  }
-}
-
-function setPageVisual(img, fallback, page) {
-  img.style.display = "block";
-  fallback.classList.remove("active");
-  fallback.innerHTML = "";
-  if (!page) {
-    img.removeAttribute("src");
-    img.style.display = "none";
-    fallback.classList.add("active");
-    fallback.innerHTML = "<h2>Hết trang</h2><p>Bạn đã đến cuối cuốn sách.</p>";
-    return;
-  }
-  img.src = page.image || "";
-  img.alt = page.title || "Trang sách";
-  img.onerror = () => {
-    img.style.display = "none";
-    fallback.classList.add("active");
-    fallback.innerHTML = <h2>${escapeHTML(page.title || "Trang sách")}</h2><p>${escapeHTML(page.text || "Hãy kiểm tra lại đường dẫn hình ảnh trong app.js.")}</p>;
-  };
-}
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  })[char]);
-}
-
-function stopInstrument() {
-  instrumentAudio.pause();
-  instrumentAudio.currentTime = 0;
-  instrumentPlay.classList.remove("playing");
-  instrumentPlay.querySelector(".sound-label").textContent = "Nghe âm thanh";
-}
-
-function updateInstrumentControl() {
-  stopInstrument();
-  const page = pages[currentPage];
-  if (page && page.audio) {
-    instrumentControl.classList.remove("hidden");
-    instrumentAudio.src = page.audio;
-    instrumentPlay.querySelector(".sound-label").textContent = Nghe ${page.instrument || "nhạc cụ"};
-  } else {
-    instrumentControl.classList.add("hidden");
-    instrumentAudio.removeAttribute("src");
-  }
-}
-
-function updateReader() {
-  const page = pages[currentPage];
-  setPageVisual(currentImage, currentFallback, page);
-  setPageVisual(nextImage, nextFallback, pages[currentPage + 1]);
-  pageNumber.textContent = currentPage + 1;
-  totalPages.textContent = pages.length;
-  prevButton.disabled = currentPage === 0;
-  $("prevTextButton").disabled = currentPage === 0;
-  nextButton.disabled = currentPage >= pages.length - 1;
-  $("nextTextButton").disabled = currentPage >= pages.length - 1;
-  updateInstrumentControl();
-}
-
-function startReading() {
-  intro.classList.add("leaving");
-  reader.classList.remove("hidden");
-  currentPage = 0;
-  updateReader();
-  if (musicEnabled) backgroundMusic.play().catch(() => {});
-}
-
-function changePage(direction) {
-  if (isAnimating) return;
-  const target = currentPage + direction;
-  if (target < 0 || target >= pages.length) return;
-  isAnimating = true;
-  stopInstrument();
-  playPageTurn();
-
-  // Trang phía trên lật đi, sau đó cập nhật nội dung trang.
-  pageNext.classList.remove("flipping");
-  void pageNext.offsetWidth;
-  if (direction > 0) {
-    setPageVisual(nextImage, nextFallback, pages[target]);
-    pageNext.classList.add("flipping");
-  } else {
-    // Lật ngược: dùng chuyển động tương ứng để tạo cảm giác lật về trước.
-    pageNext.style.transformOrigin = "right center";
-    pageNext.style.animation = "pageTurnBack .72s cubic-bezier(.65,0,.35,1) forwards";
-    setPageVisual(nextImage, nextFallback, pages[target]);
+    book.append(p);
   }
 
-  setTimeout(() => {
-    currentPage = target;
-    pageNext.classList.remove("flipping");
-    pageNext.style.animation = "";
-    pageNext.style.transformOrigin = "left center";
-    pageNext.style.transform = "";
-    updateReader();
-    isAnimating = false;
-  }, 730);
-}
-
-const backStyle = document.createElement("style");
-backStyle.textContent = "@keyframes pageTurnBack{0%{transform:rotateY(0)}45%{box-shadow:18px 0 25px #0002}100%{transform:rotateY(180deg);box-shadow:18px 0 25px #0000}}";
-document.head.appendChild(backStyle);
-
-$("startButton").addEventListener("click", startReading);
-nextButton.addEventListener("click", () => changePage(1));
-$("nextTextButton").addEventListener("click", () => changePage(1));
-prevButton.addEventListener("click", () => changePage(-1));
-$("prevTextButton").addEventListener("click", () => changePage(-1));
-
-instrumentPlay.addEventListener("click", async () => {
-  if (!instrumentAudio.src) return;
-  if (!instrumentAudio.paused) {
-    instrumentAudio.pause();
-    instrumentPlay.classList.remove("playing");
-    instrumentPlay.querySelector(".sound-label").textContent = "Nghe lại";
-    return;
-  }
-  backgroundMusic.volume = 0.06;
-  try {
-    await instrumentAudio.play();
-    instrumentPlay.classList.add("playing");
-    instrumentPlay.querySelector(".sound-label").textContent = "Đang phát";
-  } catch (error) {
-    showToast("Chưa tìm thấy file âm thanh. Hãy kiểm tra đường dẫn trong app.js.");
-    backgroundMusic.volume = musicEnabled ? 0.24 : 0;
-  }
-});
-
-instrumentAudio.addEventListener("ended", () => {
-  instrumentPlay.classList.remove("playing");
-  instrumentPlay.querySelector(".sound-label").textContent = "Nghe lại";
-  backgroundMusic.volume = musicEnabled ? 0.24 : 0;
-});
-instrumentAudio.addEventListener("pause", () => {
-  if (instrumentAudio.currentTime === 0) backgroundMusic.volume = musicEnabled ? 0.24 : 0;
-});
-
-$("musicToggle").addEventListener("click", async () => {
-  musicEnabled = !musicEnabled;
-  $("musicToggle").classList.toggle("active", musicEnabled);
-  if (musicEnabled) {
-    try { await backgroundMusic.play(); }
-    catch { showToast("Hãy thêm file nhạc nền vào thư mục assets."); }
-    $("musicToggle").textContent = "♫";
-  } else {
-    backgroundMusic.pause();
-    backgroundMusic.volume = 0;
-    $("musicToggle").textContent = "♪";
-  }
-});
-
-$("backCoverButton").addEventListener("click", () => {
-  stopInstrument();
-  backgroundMusic.pause();
-  reader.classList.add("hidden");
-  intro.classList.remove("leaving");
-  intro.classList.add("reveal");
-  currentPage = 0;
-});
-
-$("tocButton").addEventListener("click", () => {
-  const panel = $("tocPanel");
-  const list = $("tocList");
-  list.innerHTML = "";
-  pages.forEach((page, index) => {
-    const button = document.createElement("button");
-    button.className = "toc-item";
-    button.textContent = ${String(index + 1).padStart(2, "0")} · ${page.title || Trang ${index + 1}`}`;
-    button.addEventListener("click", () => {
-      stopInstrument();
-      currentPage = index;
-      updateReader();
-      panel.classList.add("hidden");
-    });
-    list.appendChild(button);
+  pf = new St.PageFlip(book, {
+    width: 1123, height: 794, size: 'stretch',
+    minWidth: Math.ceil(w / 2) + 10, maxWidth: 4000, minHeight: 100, maxHeight: 4000,
+    showCover: true, usePortrait: true,          // mỗi lần hiện 1 trang A4 ngang
+    maxShadowOpacity: 0.45, flippingTime: 800, mobileScrollSupport: false, swipeDistance: 20,
   });
-  panel.classList.toggle("hidden");
+  pf.loadFromHTML(book.querySelectorAll('.page'));
+  pf.on('flip', e => { cur = e.data; stopInst(); update(); });
+  pf.on('changeState', e => { if (e.data === 'flipping' && started) { stopInst(); sfx(); } });
+  if (startPage) pf.turnToPage(startPage);
+  update();
+}
+
+function update() {
+  $('#count').textContent = `${cur + 1} / ${TOTAL}`;
+  $('#prev').disabled = cur === 0;
+  $('#next').disabled = cur === TOTAL - 1;
+  document.querySelectorAll('#toc button').forEach(b => b.classList.toggle('cur', +b.dataset.p <= cur && cur < +b.dataset.p + +b.dataset.n));
+}
+
+/* --- Mục lục --- */
+(() => {
+  let p = 1; const ul = $('#toc ul');
+  SECTIONS.forEach(([name, n]) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<button data-p="${p - 1}" data-n="${n}">${name}<span>tr. ${p}</span></button>`;
+    li.firstChild.onclick = e => { $('#toc').hidden = true; pf.flip(+e.currentTarget.dataset.p); };
+    ul.append(li); p += n;
+  });
+})();
+
+/* --- Điều khiển --- */
+$('#prev').onclick = () => pf.flipPrev();
+$('#next').onclick = () => pf.flipNext();
+$('#home').onclick = () => { $('#toc').hidden = true; if (cur) pf.flip(0); };
+$('#tocBtn').onclick = () => { $('#toc').hidden = !$('#toc').hidden; };
+$('#music').onclick = e => {
+  const off = !bgm.paused; off ? bgm.pause() : bgm.play().catch(() => {});
+  e.currentTarget.classList.toggle('off', off);
+};
+$('#full').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+document.addEventListener('keydown', e => {
+  if (!started) return;
+  if (e.key === 'ArrowRight') pf.flipNext();
+  if (e.key === 'ArrowLeft') pf.flipPrev();
+  if (e.key === 'Escape') $('#toc').hidden = true;
 });
-$("closeTocButton").addEventListener("click", () => $("tocPanel").classList.add("hidden"));
+document.addEventListener('click', e => { if (!e.target.closest('#toc,#tocBtn')) $('#toc').hidden = true; });
 
-// Vuốt trái/phải trên điện thoại.
-$("book").addEventListener("touchstart", (event) => {
-  touchStartX = event.changedTouches[0].clientX;
-}, { passive: true });
-$("book").addEventListener("touchend", (event) => {
-  const delta = event.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(delta) > 45) changePage(delta < 0 ? 1 : -1);
-}, { passive: true });
+/* --- Mở đầu: mây tách ra, bấm "Bắt đầu" --- */
+build();
+setTimeout(() => {
+  document.querySelectorAll('.cloud').forEach(c => c.classList.add('open'));
+  setTimeout(() => { $('#start').hidden = false; }, 1800);
+}, 1500);
 
-// Phím mũi tên trái/phải trên máy tính.
-document.addEventListener("keydown", (event) => {
-  if (reader.classList.contains("hidden")) return;
-  if (event.key === "ArrowRight") changePage(1);
-  if (event.key === "ArrowLeft") changePage(-1);
+$('#start').onclick = () => {
+  started = true;
+  bgm.play().catch(() => {});
+  $('#intro').classList.add('done');
+  document.body.classList.add('ready');
+  setTimeout(() => pf.flipNext(), 300);          // mở sách sang trang đầu tiên
+};
+
+/* --- Đổi kích thước / xoay màn hình: dựng lại cho vừa khung --- */
+let lw = innerWidth, lh = innerHeight, rt;
+addEventListener('resize', () => {
+  clearTimeout(rt);
+  rt = setTimeout(() => {
+    if (Math.abs(innerWidth - lw) < 40 && Math.abs(innerHeight - lh) < 120) return;
+    lw = innerWidth; lh = innerHeight;
+    stopInst(); build(cur);
+  }, 300);
 });
-
-updateReader();
