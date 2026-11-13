@@ -15,12 +15,12 @@ const SECTIONS = [
   ['Đàn đáy', 4, 'dan-day'],
   ['Trống cơm', 5, 'trong-com'],
 ];
-const BTN_POS = { x: 80, y: 40 };                    // vị trí nút loa (% trên trang)
+const BTN_POS = { x: 80, y: 35 };                    // vị trí nút loa (% trên trang)
 const POS = {                                        // chỉnh riêng từng trang (số trang: vị trí nút)
   14: { x: 20, y: 40 },   // đàn nhị  — nút bên trái
   18: { x: 20, y: 40 },   // trống đồng
   22: { x: 20, y: 40 },   // đàn tranh
-  28: { x: 20, y: 40 },   // đàn đáy
+  28: { x: 20, y: 50 },   // đàn đáy
 };
 
 const TOTAL = SECTIONS.reduce((s, x) => s + x[1], 0);
