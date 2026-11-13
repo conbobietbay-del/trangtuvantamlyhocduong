@@ -45,16 +45,14 @@ em{font-style:normal}
 #intro{position:fixed;inset:0;z-index:50;overflow:hidden;pointer-events:none}
 #intro:not(.done) .cloud,#intro:not(.done) .start{pointer-events:auto}
 .cloud{
-  position:absolute;top:-6%;bottom:-6%;width:62%;
+  position:absolute;top:0;bottom:0;width:62%;will-change:transform;
   background:
-    radial-gradient(circle at 78% 18%,#fff 0 17%,#0000 18%),
-    radial-gradient(circle at 60% 48%,#fff 0 26%,#0000 27%),
-    radial-gradient(circle at 84% 78%,#fff 0 20%,#0000 21%),
-    radial-gradient(circle at 25% 30%,#fff3dc 0 28%,#0000 29%),
-    radial-gradient(circle at 30% 75%,#ffe9cf 0 26%,#0000 27%),
-    linear-gradient(#fff6e6,#ffeccc);
-  -webkit-mask-image:linear-gradient(90deg,#000 78%,#0000);mask-image:linear-gradient(90deg,#000 78%,#0000);
-  filter:drop-shadow(0 0 24px #f3c98b);
+    radial-gradient(circle at 72% 16%,#fff 0 12%,#fff0 21%),
+    radial-gradient(circle at 55% 46%,#fff 0 20%,#fff0 31%),
+    radial-gradient(circle at 78% 80%,#fff 0 15%,#fff0 25%),
+    radial-gradient(circle at 25% 30%,#fff3dc 0 20%,#fff3dc00 31%),
+    radial-gradient(circle at 30% 76%,#ffe9cf 0 18%,#ffe9cf00 29%),
+    linear-gradient(90deg,#fff3dc 0 72%,#fff3dc00);
   transition:transform 2.4s cubic-bezier(.65,.05,.25,1);
 }
 .cloud.l{left:0}
