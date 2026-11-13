@@ -63,7 +63,7 @@ function build(startPage = 0) {
     const p = document.createElement('div');
     p.className = 'page';
     if (n === 1 || n === TOTAL) p.dataset.density = 'hard';
-    p.innerHTML = `<img src="${imgSrc(n)}" alt="Trang ${n}" draggable="false" decoding="async">`;
+    p.innerHTML = `<img data-n="${n}" ${n <= 4 ? `src="${imgSrc(n)}"` : `data-src="${imgSrc(n)}"`} alt="Trang ${n}" draggable="false" decoding="async">`;
     const s = SOUNDS[n];
     if (s) {
       const b = document.createElement('button');
@@ -90,7 +90,14 @@ function build(startPage = 0) {
   update();
 }
 
+function loadNear() {          // chỉ tải ảnh các trang gần trang đang xem
+  for (let i = cur - 1; i <= cur + 4; i++) {
+    const im = document.querySelector(`img[data-n="${i + 1}"][data-src]`);
+    if (im) { im.src = im.dataset.src; im.removeAttribute('data-src'); }
+  }
+}
 function update() {
+  loadNear();
   $('#count').textContent = `${cur + 1} / ${TOTAL}`;
   $('#prev').disabled = cur === 0;
   $('#next').disabled = cur === TOTAL - 1;
@@ -127,7 +134,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('click', e => { if (!e.target.closest('#toc,#tocBtn')) $('#toc').hidden = true; });
 
 /* --- Mở đầu: mây tách ra, bấm "Bắt đầu" --- */
-build();
+try { build(); } catch (err) { console.error(err); }
 setTimeout(() => {
   document.querySelectorAll('.cloud').forEach(c => c.classList.add('open'));
   setTimeout(() => { $('#start').hidden = false; }, 1800);
@@ -138,7 +145,7 @@ $('#start').onclick = () => {
   bgm.play().catch(() => {});
   $('#intro').classList.add('done');
   document.body.classList.add('ready');
-  setTimeout(() => pf.flipNext(), 300);          // mở sách sang trang đầu tiên
+  setTimeout(() => pf && pf.flipNext(), 300);          // mở sách sang trang đầu tiên
 };
 
 /* --- Đổi kích thước / xoay màn hình: dựng lại cho vừa khung --- */
