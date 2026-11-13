@@ -78,9 +78,8 @@ function build(startPage = 0) {
   }
 
   pf = new St.PageFlip(book, {
-    width: 1123, height: 794, size: 'stretch',
-    minWidth: Math.ceil(w / 2) + 10, maxWidth: 4000, minHeight: 100, maxHeight: 4000,
-    showCover: true, usePortrait: true,          // mỗi lần hiện 1 trang A4 ngang
+    width: Math.round(w), height: Math.round(w / 1.4142), size: 'fixed',   // kích thước cố định theo A4 ngang
+    showCover: true, usePortrait: true,          // mỗi lần hiện 1 trang A4 ngang, căn giữa
     maxShadowOpacity: 0.45, flippingTime: 800, mobileScrollSupport: false, swipeDistance: 20,
   });
   pf.loadFromHTML(book.querySelectorAll('.page'));
