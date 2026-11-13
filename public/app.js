@@ -12,8 +12,8 @@ const SECTIONS = [
   ['Đàn nhị', 4, 'dan-nhi'],
   ['Trống đồng', 4, 'trong-dong'],
   ['Đàn tranh', 6, 'dan-tranh'],
-  ['Đàn đáy', 5, 'dan-day'],
-  ['Trống cơm', 4, 'trong-com'],
+  ['Đàn đáy', 4, 'dan-day'],
+  ['Trống cơm', 6, 'trong-com'],
 ];
 const BTN_POS = { x: 80, y: 40 };                    // vị trí nút loa (% trên trang)
 const POS = {};                                      // chỉnh riêng từng trang, ví dụ: POS[6] = { x: 70, y: 30 };
